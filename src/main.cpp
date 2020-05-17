@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <set>
 #include <algorithm>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -64,7 +65,7 @@ typedef struct
     SDL_Window *GraphicsWindow;
     SDL_Renderer *GraphicsRenderer;
     bool SelectedCards[MAX_HAND_SIZE];
-    std::vector<int> WinningCards;
+    std::set<int> WinningCards;
 
     // Game Data
     Deck SourceDeck;
@@ -296,7 +297,7 @@ void PixelPoker_Update(GameObject *GameObject)
         for (int i = 0; i < MAX_HAND_SIZE; i++)
         {
             // If the source deck is empty, shuffle the discard pile back in
-            if (GameObject->SourceDeck.IsEmpty())
+            if (GameObject->SourceDeck.Size() < MAX_HAND_SIZE)
             {
                 GameObject->PlayerDiscard.MoveTopCards(GameObject->SourceDeck, GameObject->PlayerDiscard.Size());
                 GameObject->SourceDeck.Shuffle();
@@ -413,11 +414,9 @@ void PixelPoker_Render(GameObject *GameObject)
         // Highlight winning cards
         SDL_SetRenderDrawColor(GameObject->GraphicsRenderer, 0x00, 0xFF, 0x00, 0x50);
 
-        for (int i = 0; i < GameObject->WinningCards.size(); i++)
+        for (auto i : GameObject->WinningCards)
         {
-            int cardIndex = GameObject->WinningCards[i];
-
-            SDL_Rect r = {offset_x + (cardIndex * CARD_W_PIXELS) + (cardIndex * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
+            SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
             SDL_RenderFillRect(GameObject->GraphicsRenderer, &r);
         }
 
@@ -584,25 +583,67 @@ int CheckWinnings(GameObject *GameObject)
     const int ROYAL_FLUSH = 250;
 
     // Royal Flush
+    GameObject->WinningCards = GameObject->PlayerHand.IsRoyalFlush();
 
+    if (GameObject->WinningCards.size() > 0)
+    {
+        std::cout << "ROYAL FLUSH" << std::endl;
+        return ROYAL_FLUSH;
+    }
 
     // Straight Flush
+    GameObject->WinningCards = GameObject->PlayerHand.IsStraightFlush();
 
+    if (GameObject->WinningCards.size() > 0)
+    {
+        std::cout << "STRAIGHT FLUSH" << std::endl;
+        return FOUR_OF_A_KIND;
+    }
 
     // Four of a Kind
+    GameObject->WinningCards = GameObject->PlayerHand.IsFourOfAKind();
 
+    if (GameObject->WinningCards.size() > 0)
+    {
+        std::cout << "FOUR OF A KIND" << std::endl;
+        return FOUR_OF_A_KIND;
+    }
     
     // Full House
+    GameObject->WinningCards = GameObject->PlayerHand.IsFullHouse();
 
+    if (GameObject->WinningCards.size() > 0)
+    {
+        std::cout << "FULL HOUSE" << std::endl;
+        return FULL_HOUSE;
+    }
     
     // Flush
+    GameObject->WinningCards = GameObject->PlayerHand.IsFlush();
 
+    if (GameObject->WinningCards.size() > 0)
+    {
+        std::cout << "FLUSH" << std::endl;
+        return FLUSH;
+    }
 
     // Straight
+    GameObject->WinningCards = GameObject->PlayerHand.IsStraight();
 
+    if (GameObject->WinningCards.size() > 0)
+    {
+        std::cout << "STRAIGHT" << std::endl;
+        return STRAIGHT;
+    }
 
     // Three of a Kind
+    GameObject->WinningCards = GameObject->PlayerHand.IsThreeOfAKind();
 
+    if (GameObject->WinningCards.size() > 0)
+    {
+        std::cout << "THREE OF A KIND" << std::endl;
+        return THREE_OF_A_KIND;
+    }
 
     // Two Pair
     GameObject->WinningCards = GameObject->PlayerHand.IsTwoPair();
@@ -618,7 +659,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "ONE PAIR" << std::endl;
+        std::cout << "JACKS OR BETTER" << std::endl;
         return LOSE;
     }
 

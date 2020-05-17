@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <set>
 
 enum CARD_SUIT {HEART, DIAMOND, CLUB, SPADE};
 enum CARD_VALUE {TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE};
@@ -25,6 +26,11 @@ class Card
         CARD_VALUE GetValue();
         
         std::string HumanReadable();
+
+        bool operator<(const Card &c)
+        {
+            return Value < c.Value;
+        }
 };
 
 // A collection of cards
@@ -50,11 +56,15 @@ class Deck
         void MoveTopCardTo(Deck& destinationDeck, int destinationIndex);
 
         // Deck conditions
-        std::vector<int> IsJacksOrBetter();
-        std::vector<int> IsTwoPair();
-        std::vector<int> IsThreeOfAKind();
-        std::vector<int> IsFourOfAKind();
-
+        std::set<int> IsJacksOrBetter();
+        std::set<int> IsTwoPair();
+        std::set<int> IsThreeOfAKind();
+        std::set<int> IsStraight();
+        std::set<int> IsFlush();
+        std::set<int> IsFullHouse();
+        std::set<int> IsFourOfAKind();
+        std::set<int> IsStraightFlush();
+        std::set<int> IsRoyalFlush();
 };
 
 #endif
