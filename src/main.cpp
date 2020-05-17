@@ -263,8 +263,8 @@ void PixelPoker_Update(GameObject *GameObject)
 
         if (GameObject->ButtonPressed)
         {
-            GameObject->StatusText = "SELECT CARDS TO DISCARD";
-            GameObject->ButtonText = "DEAL";
+            GameObject->StatusText = "SELECT CARDS TO HOLD";
+            GameObject->ButtonText = "DRAW";
 
             GameObject->State = GAME_STATE_BET;
             GameObject->ButtonPressed = false;
@@ -292,17 +292,17 @@ void PixelPoker_Update(GameObject *GameObject)
 
     case GAME_STATE_DEAL:
 
-        // replace selected cards with new ones
+        // Keep only the selected cards
         for (int i = 0; i < MAX_HAND_SIZE; i++)
         {
-            // TODO: if the source deck is empty, shuffle the discard pile back in
+            // If the source deck is empty, shuffle the discard pile back in
             if (GameObject->SourceDeck.IsEmpty())
             {
                 GameObject->PlayerDiscard.MoveTopCards(GameObject->SourceDeck, GameObject->PlayerDiscard.Size());
                 GameObject->SourceDeck.Shuffle();
             }
 
-            if (GameObject->SelectedCards[i])
+            if (!GameObject->SelectedCards[i])
             {
                 // discard from the player hand
                 GameObject->PlayerHand.MoveCardAt(GameObject->PlayerDiscard, i);
@@ -331,10 +331,10 @@ void PixelPoker_Update(GameObject *GameObject)
         }
         else
         {
-            GameObject->StatusText = "LOSE";
+            GameObject->StatusText = "GAME OVER";
         }
 
-        GameObject->ButtonText = "PLAY AGAIN?";
+        GameObject->ButtonText = "PLAY AGAIN";
 
         GameObject->State = GAME_STATE_FINISHED;
 
@@ -388,8 +388,8 @@ void PixelPoker_Render(GameObject *GameObject)
         // Render the player's hand
         RenderHand(GameObject->GraphicsRenderer, GameObject->PlayerHand);
 
-        // Render selected cards
-        SDL_SetRenderDrawColor(GameObject->GraphicsRenderer, 0xFF, 0x00, 0x00, 0x50);
+        // Highlight selected cards
+        SDL_SetRenderDrawColor(GameObject->GraphicsRenderer, 0x00, 0x00, 0xFF, 0x50);
 
         for (int i = 0; i < MAX_HAND_SIZE; i++)
         {

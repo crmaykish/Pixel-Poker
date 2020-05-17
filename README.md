@@ -8,10 +8,12 @@
 On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev`
 
 ## Todo
- - mouse inputs
- - betting and scoring system
- - gameplay logic and game over
- - font rendering
+ - invert the selection logic
+ - fix scoring logic
+ - Add bet select UI
+ - out of money handling
+ - high scores
+ - add card back graphic
  - card draw animations
  - sound effects / music
  - fresh deck vs recycled every round option
