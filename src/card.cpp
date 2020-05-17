@@ -119,3 +119,66 @@ Card& Deck::CardAt(int index)
 {
     return cards.at(index);
 }
+
+std::vector<int> Deck::IsJacksOrBetter()
+{
+    std::vector<int> result;
+
+    for (int i = 0; i < cards.size(); i++)
+    {
+        if (CardAt(i).GetValue() >= JACK){
+            for (int j = i + 1; j < cards.size(); j++)
+            {
+                if (CardAt(i).GetValue() == CardAt(j).GetValue())
+                {
+                    result.push_back(i);
+                    result.push_back(j);
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+std::vector<int> Deck::IsTwoPair()
+{
+    std::vector<int> result;
+
+    for (int i = 0; i < cards.size(); i++)
+    {
+        for (int j = i + 1; j < cards.size(); j++)
+        {
+            if (CardAt(i).GetValue() == CardAt(j).GetValue())
+            {
+                // TODO: broken - this will add duplicates and mess up the count
+                result.push_back(i);
+                result.push_back(j);
+            }
+        }
+    }
+
+    if (!result.size() == 4)
+    {
+        result.clear();
+    }
+
+    return result;
+
+}
+
+std::vector<int> Deck::IsThreeOfAKind()
+{
+    std::vector<int> result;
+
+
+    return result;
+}
+
+std::vector<int> Deck::IsFourOfAKind()
+{
+    std::vector<int> result;
+
+
+    return result;
+}

@@ -36,16 +36,25 @@ class Deck
     public:
         Deck();
         ~Deck();
+
+        // Statuses
         void Shuffle();
         bool IsEmpty();
         int Size();
-
         Card& CardAt(int index);
 
+        // Deck manipulation
         void AddNewCard(Card card);
         void MoveTopCards(Deck& destinationDeck, int count = 1);
         void MoveCardAt(Deck& destinationDeck, int sourceIndex);
         void MoveTopCardTo(Deck& destinationDeck, int destinationIndex);
+
+        // Deck conditions
+        std::vector<int> IsJacksOrBetter();
+        std::vector<int> IsTwoPair();
+        std::vector<int> IsThreeOfAKind();
+        std::vector<int> IsFourOfAKind();
+
 };
 
 #endif
