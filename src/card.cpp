@@ -81,21 +81,38 @@ int Deck::Size()
     return cards.size();
 }
 
-void Deck::AddCard(Card card)
+void Deck::AddNewCard(Card card)
 {
     cards.push_back(card);
 }
 
-void Deck::DrawCard(Deck& targetDeck, int count)
+void Deck::AddNewCardAt(Card card, int index)
+{
+    cards.insert(cards.begin() + index, card);
+}
+
+void Deck::MoveTopCards(Deck& destinationDeck, int count)
 {
     for (int i = 0; i < count; i++)
     {
         if (!IsEmpty())
         {
-            targetDeck.AddCard(cards.back());
+            destinationDeck.AddNewCard(cards.back());
             cards.pop_back();
         }
     }
+}
+
+void Deck::MoveCardAt(Deck& targetDeck, int index)
+{
+    targetDeck.AddNewCard(cards.at(index));
+    cards.erase(cards.begin() + index);
+}
+
+void Deck::MoveTopCardTo(Deck& destinationDeck, int destinationIndex)
+{
+    destinationDeck.AddNewCardAt(cards.back(), destinationIndex);
+    cards.pop_back();
 }
 
 Card& Deck::CardAt(int index)

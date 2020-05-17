@@ -32,15 +32,20 @@ class Deck
 {
     private:
         std::vector<Card> cards;
+        void AddNewCardAt(Card card, int index);
     public:
         Deck();
         ~Deck();
         void Shuffle();
         bool IsEmpty();
         int Size();
-        void AddCard(Card card);
-        void DrawCard(Deck& targetDeck, int count);
+
         Card& CardAt(int index);
+
+        void AddNewCard(Card card);
+        void MoveTopCards(Deck& destinationDeck, int count = 1);
+        void MoveCardAt(Deck& destinationDeck, int sourceIndex);
+        void MoveTopCardTo(Deck& destinationDeck, int destinationIndex);
 };
 
 #endif

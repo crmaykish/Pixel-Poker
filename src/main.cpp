@@ -21,13 +21,24 @@ const int COIN_SCALING = 4;
 const int COIN_W_PIXELS = 16;
 const int COIN_H_PIXELS = 16;
 
+const int DEAL_BUTTON_SCALING = 2;
+const int DEAL_BUTTON_W_PIXELS = 320 * DEAL_BUTTON_SCALING;
+const int DEAL_BUTTON_H_PIXELS = 64 * DEAL_BUTTON_SCALING;
+const int DEAL_BUTTON_GAP = 6;
+
 const int MAX_HAND_SIZE = 5;
 
 const int offset_x = (WINDOW_W_PIXELS / 2) - ((MAX_HAND_SIZE * CARD_W_PIXELS) / 2) - (CARD_GAP_PIXELS * (MAX_HAND_SIZE - 1) / 2);
 const int offset_y = WINDOW_H_PIXELS / 2 - CARD_H_PIXELS / 2;
 
+const int deal_button_offset_x = WINDOW_W_PIXELS - DEAL_BUTTON_W_PIXELS - DEAL_BUTTON_GAP;
+const int deal_button_offset_y = WINDOW_H_PIXELS - DEAL_BUTTON_H_PIXELS - DEAL_BUTTON_GAP;
+
+const SDL_Rect DealButtonRect = {deal_button_offset_x, deal_button_offset_y, DEAL_BUTTON_W_PIXELS, DEAL_BUTTON_H_PIXELS};
+
 typedef enum
 {
+    GAME_STATE_INIT,
     GAME_STATE_PLAYING,
     GAME_STATE_EXIT
  } GameState;
@@ -40,6 +51,7 @@ typedef struct
     SDL_Renderer *GraphicsRenderer;
     SDL_Texture *BackgroundTexture;
     SDL_Texture *CoinTexture;
+    SDL_Texture *DealButtonTexture;
 
     Deck SourceDeck;
     Deck PlayerHand;
@@ -48,6 +60,8 @@ typedef struct
     uint8_t CoinImageIndex = 0;
 
     int lastClickX, lastClickY;
+
+    bool Deal;
 
     bool SelectedCards[MAX_HAND_SIZE];
 
@@ -89,6 +103,8 @@ void PixelPoker_Init(GameObject *GameObject)
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
 
+    GameObject->Deal = false;
+
     for (int i = 0; i < MAX_HAND_SIZE; i++)
     {
         GameObject->SelectedCards[i] = false;
@@ -108,6 +124,10 @@ void PixelPoker_Init(GameObject *GameObject)
     // Load the coin texture
     std::string coinImagePath = MEDIA_PATH + "coin.png";
     GameObject->CoinTexture = IMG_LoadTexture(GameObject->GraphicsRenderer, coinImagePath.c_str());
+
+    // Load the deal button texture
+    std::string dealImagePath = MEDIA_PATH + "deal_button.png";
+    GameObject->DealButtonTexture = IMG_LoadTexture(GameObject->GraphicsRenderer, dealImagePath.c_str());
 
     // Load the card textures
     std::map<CARD_VALUE, std::string> heartTextures;
@@ -174,8 +194,7 @@ void PixelPoker_Init(GameObject *GameObject)
     spadeTextures.insert({KING, "card_13_spade.png"});
     CardTextureMap.insert({SPADE, spadeTextures});
 
-    // GameObject->State = GAME_STATE_MENU;
-    GameObject->State = GAME_STATE_PLAYING;
+    GameObject->State = GAME_STATE_INIT;
 }
 
 void PixelPoker_Update(GameObject *GameObject)
@@ -184,15 +203,46 @@ void PixelPoker_Update(GameObject *GameObject)
 
     switch (GameObject->State)
     {
-    case GAME_STATE_PLAYING:
-        // Create the deck if empty
+    case GAME_STATE_INIT:
+        // Create a shuffled source deck
         CreateDeck(GameObject->SourceDeck);
         
-        // If player hand is empty, fill draw from the deck to fill it
-        if (GameObject->PlayerHand.IsEmpty())
+        // Deal cards to the player
+        GameObject->SourceDeck.MoveTopCards(GameObject->PlayerHand, MAX_HAND_SIZE);
+        
+        GameObject->State = GAME_STATE_PLAYING;
+
+        break;
+
+    case GAME_STATE_PLAYING:
+
+        if (GameObject->Deal)
         {
-            // DrawCard(GameObject->SourceDeck, GameObject->PlayerHand, MAX_HAND_SIZE);
-            GameObject->SourceDeck.DrawCard(GameObject->PlayerHand, MAX_HAND_SIZE);
+            // replace selected cards with new ones
+            for (int i = 0; i < MAX_HAND_SIZE; i++)
+            {
+                // TODO: if the source deck is empty, shuffle the discard pile back in
+                if (GameObject->SourceDeck.IsEmpty())
+                {
+                    GameObject->PlayerDiscard.MoveTopCards(GameObject->SourceDeck, GameObject->PlayerDiscard.Size());
+                    GameObject->SourceDeck.Shuffle();
+                }
+
+                if (GameObject->SelectedCards[i])
+                {
+                    // discard from the player hand
+                    GameObject->PlayerHand.MoveCardAt(GameObject->PlayerDiscard, i);
+
+                    // draw a new card from the deck
+                    GameObject->SourceDeck.MoveTopCardTo(GameObject->PlayerHand, i);
+                }
+
+                GameObject->SelectedCards[i] = false;
+            }
+
+            GameObject->Deal = false;
+
+            std::cout << "Cards in draw pile: " << GameObject->SourceDeck.Size() << std::endl;
         }
 
         GameObject->CoinImageIndex++;
@@ -221,16 +271,21 @@ void PixelPoker_Update(GameObject *GameObject)
     if (GameObject->lastClickX > 0 && GameObject->lastClickY > 0)
     {
         // Determine if any cards were clicked on
-
         for (int i = 0; i < MAX_HAND_SIZE; i++)
         {
             SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
 
-            if (GameObject->lastClickX > r.x && GameObject->lastClickX < r.x +r.w && GameObject->lastClickY > r.y && GameObject->lastClickY < r.y + r.h)
+            if (GameObject->lastClickX > r.x && GameObject->lastClickX < r.x + r.w && GameObject->lastClickY > r.y && GameObject->lastClickY < r.y + r.h)
             {
                 std::cout << "Clicked on card " << i + 1 << std::endl;
                 GameObject->SelectedCards[i] = !GameObject->SelectedCards[i];
             }
+        }
+
+        // Check if deal button was pressed
+        if (GameObject->lastClickX > DealButtonRect.x && GameObject->lastClickX < DealButtonRect.x + DealButtonRect.w && GameObject->lastClickY > DealButtonRect.y && GameObject->lastClickY < DealButtonRect.y + DealButtonRect.h)
+        {
+            GameObject->Deal = true;
         }
 
         GameObject->lastClickX = 0;
@@ -261,6 +316,9 @@ void PixelPoker_Render(GameObject *GameObject)
         }
     }
 
+    // Render the deal button
+    SDL_RenderCopy(GameObject->GraphicsRenderer, GameObject->DealButtonTexture, NULL, &DealButtonRect);
+
     // Render coin total
     // TODO: Really crude animation
     SDL_Rect coinSrcRect = {((GameObject->CoinImageIndex % 32) / 8) * COIN_W_PIXELS, 0, COIN_W_PIXELS, COIN_H_PIXELS};
@@ -284,58 +342,58 @@ void CreateDeck(Deck& deck)
 {
     if (deck.IsEmpty())
     {
-        deck.AddCard(Card(HEART, ACE));
-        deck.AddCard(Card(HEART, TWO));
-        deck.AddCard(Card(HEART, THREE));
-        deck.AddCard(Card(HEART, FOUR));
-        deck.AddCard(Card(HEART, FIVE));
-        deck.AddCard(Card(HEART, SIX));
-        deck.AddCard(Card(HEART, SEVEN));
-        deck.AddCard(Card(HEART, EIGHT));
-        deck.AddCard(Card(HEART, NINE));
-        deck.AddCard(Card(HEART, TEN));
-        deck.AddCard(Card(HEART, JACK));
-        deck.AddCard(Card(HEART, QUEEN));
-        deck.AddCard(Card(HEART, KING));
-        deck.AddCard(Card(DIAMOND, ACE));
-        deck.AddCard(Card(DIAMOND, TWO));
-        deck.AddCard(Card(DIAMOND, THREE));
-        deck.AddCard(Card(DIAMOND, FOUR));
-        deck.AddCard(Card(DIAMOND, FIVE));
-        deck.AddCard(Card(DIAMOND, SIX));
-        deck.AddCard(Card(DIAMOND, SEVEN));
-        deck.AddCard(Card(DIAMOND, EIGHT));
-        deck.AddCard(Card(DIAMOND, NINE));
-        deck.AddCard(Card(DIAMOND, TEN));
-        deck.AddCard(Card(DIAMOND, JACK));
-        deck.AddCard(Card(DIAMOND, QUEEN));
-        deck.AddCard(Card(DIAMOND, KING));
-        deck.AddCard(Card(CLUB, ACE));
-        deck.AddCard(Card(CLUB, TWO));
-        deck.AddCard(Card(CLUB, THREE));
-        deck.AddCard(Card(CLUB, FOUR));
-        deck.AddCard(Card(CLUB, FIVE));
-        deck.AddCard(Card(CLUB, SIX));
-        deck.AddCard(Card(CLUB, SEVEN));
-        deck.AddCard(Card(CLUB, EIGHT));
-        deck.AddCard(Card(CLUB, NINE));
-        deck.AddCard(Card(CLUB, TEN));
-        deck.AddCard(Card(CLUB, JACK));
-        deck.AddCard(Card(CLUB, QUEEN));
-        deck.AddCard(Card(CLUB, KING));
-        deck.AddCard(Card(SPADE, ACE));
-        deck.AddCard(Card(SPADE, TWO));
-        deck.AddCard(Card(SPADE, THREE));
-        deck.AddCard(Card(SPADE, FOUR));
-        deck.AddCard(Card(SPADE, FIVE));
-        deck.AddCard(Card(SPADE, SIX));
-        deck.AddCard(Card(SPADE, SEVEN));
-        deck.AddCard(Card(SPADE, EIGHT));
-        deck.AddCard(Card(SPADE, NINE));
-        deck.AddCard(Card(SPADE, TEN));
-        deck.AddCard(Card(SPADE, JACK));
-        deck.AddCard(Card(SPADE, QUEEN));
-        deck.AddCard(Card(SPADE, KING));
+        deck.AddNewCard(Card(HEART, ACE));
+        deck.AddNewCard(Card(HEART, TWO));
+        deck.AddNewCard(Card(HEART, THREE));
+        deck.AddNewCard(Card(HEART, FOUR));
+        deck.AddNewCard(Card(HEART, FIVE));
+        deck.AddNewCard(Card(HEART, SIX));
+        deck.AddNewCard(Card(HEART, SEVEN));
+        deck.AddNewCard(Card(HEART, EIGHT));
+        deck.AddNewCard(Card(HEART, NINE));
+        deck.AddNewCard(Card(HEART, TEN));
+        deck.AddNewCard(Card(HEART, JACK));
+        deck.AddNewCard(Card(HEART, QUEEN));
+        deck.AddNewCard(Card(HEART, KING));
+        deck.AddNewCard(Card(DIAMOND, ACE));
+        deck.AddNewCard(Card(DIAMOND, TWO));
+        deck.AddNewCard(Card(DIAMOND, THREE));
+        deck.AddNewCard(Card(DIAMOND, FOUR));
+        deck.AddNewCard(Card(DIAMOND, FIVE));
+        deck.AddNewCard(Card(DIAMOND, SIX));
+        deck.AddNewCard(Card(DIAMOND, SEVEN));
+        deck.AddNewCard(Card(DIAMOND, EIGHT));
+        deck.AddNewCard(Card(DIAMOND, NINE));
+        deck.AddNewCard(Card(DIAMOND, TEN));
+        deck.AddNewCard(Card(DIAMOND, JACK));
+        deck.AddNewCard(Card(DIAMOND, QUEEN));
+        deck.AddNewCard(Card(DIAMOND, KING));
+        deck.AddNewCard(Card(CLUB, ACE));
+        deck.AddNewCard(Card(CLUB, TWO));
+        deck.AddNewCard(Card(CLUB, THREE));
+        deck.AddNewCard(Card(CLUB, FOUR));
+        deck.AddNewCard(Card(CLUB, FIVE));
+        deck.AddNewCard(Card(CLUB, SIX));
+        deck.AddNewCard(Card(CLUB, SEVEN));
+        deck.AddNewCard(Card(CLUB, EIGHT));
+        deck.AddNewCard(Card(CLUB, NINE));
+        deck.AddNewCard(Card(CLUB, TEN));
+        deck.AddNewCard(Card(CLUB, JACK));
+        deck.AddNewCard(Card(CLUB, QUEEN));
+        deck.AddNewCard(Card(CLUB, KING));
+        deck.AddNewCard(Card(SPADE, ACE));
+        deck.AddNewCard(Card(SPADE, TWO));
+        deck.AddNewCard(Card(SPADE, THREE));
+        deck.AddNewCard(Card(SPADE, FOUR));
+        deck.AddNewCard(Card(SPADE, FIVE));
+        deck.AddNewCard(Card(SPADE, SIX));
+        deck.AddNewCard(Card(SPADE, SEVEN));
+        deck.AddNewCard(Card(SPADE, EIGHT));
+        deck.AddNewCard(Card(SPADE, NINE));
+        deck.AddNewCard(Card(SPADE, TEN));
+        deck.AddNewCard(Card(SPADE, JACK));
+        deck.AddNewCard(Card(SPADE, QUEEN));
+        deck.AddNewCard(Card(SPADE, KING));
 
         deck.Shuffle();
     }
