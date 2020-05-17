@@ -23,14 +23,9 @@ const int COIN_H_PIXELS = 16;
 
 const int MAX_HAND_SIZE = 5;
 
-typedef std::vector<Card> Deck;
-
 typedef enum
 {
-    GAME_STATE_LOADING,
-    GAME_STATE_MENU,
     GAME_STATE_PLAYING,
-    GAME_STATE_FINISHED,
     GAME_STATE_EXIT
  } GameState;
 
@@ -84,8 +79,6 @@ int main()
 
 void PixelPoker_Init(GameObject *GameObject)
 {
-    GameObject->State = GAME_STATE_LOADING;
-
     srand((unsigned int)time(0));
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -181,25 +174,19 @@ void PixelPoker_Update(GameObject *GameObject)
 
     switch (GameObject->State)
     {
-    case GAME_STATE_MENU:
-        /* code */
-        break;
-    
     case GAME_STATE_PLAYING:
         // Create the deck if empty
         CreateDeck(GameObject->SourceDeck);
         
-        // If player hands are empty, draw into them
-        if (GameObject->PlayerHand.empty())
+        // If player hand is empty, fill draw from the deck to fill it
+        if (GameObject->PlayerHand.IsEmpty())
         {
-            DrawCard(GameObject->SourceDeck, GameObject->PlayerHand, MAX_HAND_SIZE);
+            // DrawCard(GameObject->SourceDeck, GameObject->PlayerHand, MAX_HAND_SIZE);
+            GameObject->SourceDeck.DrawCard(GameObject->PlayerHand, MAX_HAND_SIZE);
         }
 
         GameObject->CoinImageIndex++;
 
-        break;
-
-    case GAME_STATE_FINISHED:
         break;
 
     default:
@@ -242,18 +229,6 @@ void PixelPoker_Render(GameObject *GameObject)
         }
     }
 
-    // TODO: keep track of the position of each card instead of deriving it from the relative list position, then it can be rendered easily
-
-    // TODO: raining coins animation on jackpot, why not?
-
-    // TODO: mouse inputs
-
-    // TODO: betting and scoring system
-
-    // TODO: gameplay logic and game over
-
-    // TODO: font rendering
-
     // Render coin total
     // TODO: Really crude animation
     SDL_Rect coinSrcRect = {((GameObject->CoinImageIndex % 32) / 8) * COIN_W_PIXELS, 0, COIN_W_PIXELS, COIN_H_PIXELS};
@@ -275,86 +250,74 @@ void PixelPoker_Close(GameObject *GameObject)
 
 void CreateDeck(Deck& deck)
 {
-    if (deck.empty())
+    if (deck.IsEmpty())
     {
-        deck.push_back(Card(HEART, ACE));
-        deck.push_back(Card(HEART, TWO));
-        deck.push_back(Card(HEART, THREE));
-        deck.push_back(Card(HEART, FOUR));
-        deck.push_back(Card(HEART, FIVE));
-        deck.push_back(Card(HEART, SIX));
-        deck.push_back(Card(HEART, SEVEN));
-        deck.push_back(Card(HEART, EIGHT));
-        deck.push_back(Card(HEART, NINE));
-        deck.push_back(Card(HEART, TEN));
-        deck.push_back(Card(HEART, JACK));
-        deck.push_back(Card(HEART, QUEEN));
-        deck.push_back(Card(HEART, KING));
-        deck.push_back(Card(DIAMOND, ACE));
-        deck.push_back(Card(DIAMOND, TWO));
-        deck.push_back(Card(DIAMOND, THREE));
-        deck.push_back(Card(DIAMOND, FOUR));
-        deck.push_back(Card(DIAMOND, FIVE));
-        deck.push_back(Card(DIAMOND, SIX));
-        deck.push_back(Card(DIAMOND, SEVEN));
-        deck.push_back(Card(DIAMOND, EIGHT));
-        deck.push_back(Card(DIAMOND, NINE));
-        deck.push_back(Card(DIAMOND, TEN));
-        deck.push_back(Card(DIAMOND, JACK));
-        deck.push_back(Card(DIAMOND, QUEEN));
-        deck.push_back(Card(DIAMOND, KING));
-        deck.push_back(Card(CLUB, ACE));
-        deck.push_back(Card(CLUB, TWO));
-        deck.push_back(Card(CLUB, THREE));
-        deck.push_back(Card(CLUB, FOUR));
-        deck.push_back(Card(CLUB, FIVE));
-        deck.push_back(Card(CLUB, SIX));
-        deck.push_back(Card(CLUB, SEVEN));
-        deck.push_back(Card(CLUB, EIGHT));
-        deck.push_back(Card(CLUB, NINE));
-        deck.push_back(Card(CLUB, TEN));
-        deck.push_back(Card(CLUB, JACK));
-        deck.push_back(Card(CLUB, QUEEN));
-        deck.push_back(Card(CLUB, KING));
-        deck.push_back(Card(SPADE, ACE));
-        deck.push_back(Card(SPADE, TWO));
-        deck.push_back(Card(SPADE, THREE));
-        deck.push_back(Card(SPADE, FOUR));
-        deck.push_back(Card(SPADE, FIVE));
-        deck.push_back(Card(SPADE, SIX));
-        deck.push_back(Card(SPADE, SEVEN));
-        deck.push_back(Card(SPADE, EIGHT));
-        deck.push_back(Card(SPADE, NINE));
-        deck.push_back(Card(SPADE, TEN));
-        deck.push_back(Card(SPADE, JACK));
-        deck.push_back(Card(SPADE, QUEEN));
-        deck.push_back(Card(SPADE, KING));
+        deck.AddCard(Card(HEART, ACE));
+        deck.AddCard(Card(HEART, TWO));
+        deck.AddCard(Card(HEART, THREE));
+        deck.AddCard(Card(HEART, FOUR));
+        deck.AddCard(Card(HEART, FIVE));
+        deck.AddCard(Card(HEART, SIX));
+        deck.AddCard(Card(HEART, SEVEN));
+        deck.AddCard(Card(HEART, EIGHT));
+        deck.AddCard(Card(HEART, NINE));
+        deck.AddCard(Card(HEART, TEN));
+        deck.AddCard(Card(HEART, JACK));
+        deck.AddCard(Card(HEART, QUEEN));
+        deck.AddCard(Card(HEART, KING));
+        deck.AddCard(Card(DIAMOND, ACE));
+        deck.AddCard(Card(DIAMOND, TWO));
+        deck.AddCard(Card(DIAMOND, THREE));
+        deck.AddCard(Card(DIAMOND, FOUR));
+        deck.AddCard(Card(DIAMOND, FIVE));
+        deck.AddCard(Card(DIAMOND, SIX));
+        deck.AddCard(Card(DIAMOND, SEVEN));
+        deck.AddCard(Card(DIAMOND, EIGHT));
+        deck.AddCard(Card(DIAMOND, NINE));
+        deck.AddCard(Card(DIAMOND, TEN));
+        deck.AddCard(Card(DIAMOND, JACK));
+        deck.AddCard(Card(DIAMOND, QUEEN));
+        deck.AddCard(Card(DIAMOND, KING));
+        deck.AddCard(Card(CLUB, ACE));
+        deck.AddCard(Card(CLUB, TWO));
+        deck.AddCard(Card(CLUB, THREE));
+        deck.AddCard(Card(CLUB, FOUR));
+        deck.AddCard(Card(CLUB, FIVE));
+        deck.AddCard(Card(CLUB, SIX));
+        deck.AddCard(Card(CLUB, SEVEN));
+        deck.AddCard(Card(CLUB, EIGHT));
+        deck.AddCard(Card(CLUB, NINE));
+        deck.AddCard(Card(CLUB, TEN));
+        deck.AddCard(Card(CLUB, JACK));
+        deck.AddCard(Card(CLUB, QUEEN));
+        deck.AddCard(Card(CLUB, KING));
+        deck.AddCard(Card(SPADE, ACE));
+        deck.AddCard(Card(SPADE, TWO));
+        deck.AddCard(Card(SPADE, THREE));
+        deck.AddCard(Card(SPADE, FOUR));
+        deck.AddCard(Card(SPADE, FIVE));
+        deck.AddCard(Card(SPADE, SIX));
+        deck.AddCard(Card(SPADE, SEVEN));
+        deck.AddCard(Card(SPADE, EIGHT));
+        deck.AddCard(Card(SPADE, NINE));
+        deck.AddCard(Card(SPADE, TEN));
+        deck.AddCard(Card(SPADE, JACK));
+        deck.AddCard(Card(SPADE, QUEEN));
+        deck.AddCard(Card(SPADE, KING));
 
-        std::random_shuffle(deck.begin(), deck.end());
-    }
-}
-
-void DrawCard(Deck& source, Deck& target, int count)
-{
-    for (int i = 0; i < count; i++)
-    {
-        if (!source.empty())
-        {
-            target.push_back(source.back());
-            source.pop_back();
-        }
+        deck.Shuffle();
     }
 }
 
 void RenderHand(SDL_Renderer *Renderer, Deck& hand)
 {
-    for (int i = 0; i < hand.size(); i++)
+    for (int i = 0; i < hand.Size(); i++)
     {
         int offset_x = (WINDOW_W_PIXELS / 2) - ((MAX_HAND_SIZE * CARD_W_PIXELS) / 2) - (CARD_GAP_PIXELS * (MAX_HAND_SIZE - 1) / 2);
         int offset_y = WINDOW_H_PIXELS / 2 - CARD_H_PIXELS / 2;
         SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
         
-        Card c = hand.at(i);
+        Card c = hand.CardAt(i);
         
         std::map<CARD_VALUE, std::string> valueStrings = CardTextureMap.at(c.GetSuit());
 

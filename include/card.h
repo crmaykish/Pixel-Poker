@@ -3,10 +3,12 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 
 enum CARD_SUIT {HEART, DIAMOND, CLUB, SPADE};
 enum CARD_VALUE {TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE};
 
+// Logical representation of a playing card
 class Card
 {
     private:
@@ -23,6 +25,22 @@ class Card
         CARD_VALUE GetValue();
         
         std::string HumanReadable();
+};
+
+// A collection of cards
+class Deck
+{
+    private:
+        std::vector<Card> cards;
+    public:
+        Deck();
+        ~Deck();
+        void Shuffle();
+        bool IsEmpty();
+        int Size();
+        void AddCard(Card card);
+        void DrawCard(Deck& targetDeck, int count);
+        Card& CardAt(int index);
 };
 
 #endif

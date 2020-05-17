@@ -1,4 +1,5 @@
 #include <string>
+#include <algorithm>
 #include "card.h"
 
 std::map<CARD_SUIT, std::string> Card::SuitMap;
@@ -53,4 +54,51 @@ CARD_SUIT Card::GetSuit()
 CARD_VALUE Card::GetValue()
 {
     return Value;
+}
+
+Deck::Deck()
+{
+
+}
+
+Deck::~Deck()
+{
+
+}
+
+void Deck::Shuffle()
+{
+    std::random_shuffle(cards.begin(), cards.end());
+}
+
+bool Deck::IsEmpty()
+{
+    return cards.empty();
+}
+
+int Deck::Size()
+{
+    return cards.size();
+}
+
+void Deck::AddCard(Card card)
+{
+    cards.push_back(card);
+}
+
+void Deck::DrawCard(Deck& targetDeck, int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        if (!IsEmpty())
+        {
+            targetDeck.AddCard(cards.back());
+            cards.pop_back();
+        }
+    }
+}
+
+Card& Deck::CardAt(int index)
+{
+    return cards.at(index);
 }
