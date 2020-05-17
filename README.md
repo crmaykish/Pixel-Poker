@@ -9,6 +9,7 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev`
 
 ## Todo
  - invert the selection logic
+ - move cards up on the screen to make UI bigger
  - fix scoring logic
  - Add bet select UI
  - out of money handling
