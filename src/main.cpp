@@ -23,6 +23,9 @@ const int COIN_H_PIXELS = 16;
 
 const int MAX_HAND_SIZE = 5;
 
+const int offset_x = (WINDOW_W_PIXELS / 2) - ((MAX_HAND_SIZE * CARD_W_PIXELS) / 2) - (CARD_GAP_PIXELS * (MAX_HAND_SIZE - 1) / 2);
+const int offset_y = WINDOW_H_PIXELS / 2 - CARD_H_PIXELS / 2;
+
 typedef enum
 {
     GAME_STATE_PLAYING,
@@ -43,6 +46,8 @@ typedef struct
     Deck PlayerDiscard;
     
     uint8_t CoinImageIndex = 0;
+
+    int lastClickX, lastClickY;
 
     bool SelectedCards[MAX_HAND_SIZE];
 
@@ -83,6 +88,11 @@ void PixelPoker_Init(GameObject *GameObject)
 
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
+
+    for (int i = 0; i < MAX_HAND_SIZE; i++)
+    {
+        GameObject->SelectedCards[i] = false;
+    }
 
     // Create a window
     GameObject->GraphicsWindow = SDL_CreateWindow("PIXEL POKER", 0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS, SDL_WINDOW_SHOWN);
@@ -200,9 +210,31 @@ void PixelPoker_Update(GameObject *GameObject)
         {
             GameObject->State = GAME_STATE_EXIT;
         }
-        
-        // TODO: mouse input
+        else if (event.type == SDL_MOUSEBUTTONDOWN)
+        {
+            SDL_GetMouseState(&GameObject->lastClickX, &GameObject->lastClickY);
 
+            std::cout << GameObject->lastClickX << ", " << GameObject->lastClickY << std::endl;
+        }
+    }
+
+    if (GameObject->lastClickX > 0 && GameObject->lastClickY > 0)
+    {
+        // Determine if any cards were clicked on
+
+        for (int i = 0; i < MAX_HAND_SIZE; i++)
+        {
+            SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
+
+            if (GameObject->lastClickX > r.x && GameObject->lastClickX < r.x +r.w && GameObject->lastClickY > r.y && GameObject->lastClickY < r.y + r.h)
+            {
+                std::cout << "Clicked on card " << i + 1 << std::endl;
+                GameObject->SelectedCards[i] = !GameObject->SelectedCards[i];
+            }
+        }
+
+        GameObject->lastClickX = 0;
+        GameObject->lastClickY = 0;
     }
 }
 
@@ -224,8 +256,8 @@ void PixelPoker_Render(GameObject *GameObject)
     {
         if (GameObject->SelectedCards[i])
         {
-            SDL_Rect selectionRect = {10, 10, 200, 200};
-            SDL_RenderFillRect(GameObject->GraphicsRenderer, &selectionRect);
+            SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
+            SDL_RenderFillRect(GameObject->GraphicsRenderer, &r);
         }
     }
 
@@ -313,8 +345,6 @@ void RenderHand(SDL_Renderer *Renderer, Deck& hand)
 {
     for (int i = 0; i < hand.Size(); i++)
     {
-        int offset_x = (WINDOW_W_PIXELS / 2) - ((MAX_HAND_SIZE * CARD_W_PIXELS) / 2) - (CARD_GAP_PIXELS * (MAX_HAND_SIZE - 1) / 2);
-        int offset_y = WINDOW_H_PIXELS / 2 - CARD_H_PIXELS / 2;
         SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
         
         Card c = hand.CardAt(i);
