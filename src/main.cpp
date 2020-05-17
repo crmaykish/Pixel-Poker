@@ -4,11 +4,17 @@
 #include <algorithm>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "card.h"
 
 // CONSTANTS
+
+// TODO: Handle these paths dynamically
 const std::string MEDIA_PATH = "/home/colin/nas/projects/cpp_games/pixel_poker/media/images/";
+const std::string FONT_PATH = "/usr/share/fonts/truetype/freefont/";
+const std::string FONT_NAME = "FreeMono.ttf";
+const int FONT_SIZE = 32;
 
 const int WINDOW_W_PIXELS = 1280;
 const int WINDOW_H_PIXELS = 800;
@@ -35,7 +41,9 @@ const int offset_y = WINDOW_H_PIXELS / 2 - CARD_H_PIXELS / 2;
 const int deal_button_offset_x = WINDOW_W_PIXELS - DEAL_BUTTON_W_PIXELS - DEAL_BUTTON_GAP;
 const int deal_button_offset_y = WINDOW_H_PIXELS - DEAL_BUTTON_H_PIXELS - DEAL_BUTTON_GAP;
 
-const SDL_Rect DealButtonRect = {deal_button_offset_x, deal_button_offset_y, DEAL_BUTTON_W_PIXELS, DEAL_BUTTON_H_PIXELS};
+const SDL_Rect ButtonRect = {deal_button_offset_x, deal_button_offset_y, DEAL_BUTTON_W_PIXELS, DEAL_BUTTON_H_PIXELS};
+const SDL_Rect StatusMessageRect = {8, WINDOW_H_PIXELS - 64, WINDOW_W_PIXELS / 4, 64};
+const SDL_Rect CoinMessageRect = {8 + COIN_W_PIXELS * COIN_SCALING, 8, WINDOW_W_PIXELS / 8, 64};
 
 // DEFINITIONS
 typedef enum
@@ -71,6 +79,9 @@ typedef struct
     int LastBet = 10;
     int LastWinnings = 0;
 
+    std::string StatusText;
+    std::string ButtonText;
+
 } GameObject;
 
 // FUNCTION PROTOTYPES
@@ -89,11 +100,14 @@ void HandleInput(GameObject *GameObject);
 
 int CheckWinnings(GameObject *GameObject);
 
+void RenderText(SDL_Renderer *Renderer, std::string Text, const SDL_Rect *Rect);
+
 // GLOBAL VARIABLES
 std::map<CARD_SUIT, std::map<CARD_VALUE, std::string>> CardTextureMap;
 SDL_Texture *BackgroundTexture;
 SDL_Texture *CoinTexture;
-SDL_Texture *DealButtonTexture;
+SDL_Texture *ButtonTexture;
+TTF_Font *Font;
 
 int main()
 {
@@ -118,6 +132,7 @@ void PixelPoker_Init(GameObject *GameObject)
 
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
+    TTF_Init();
 
     // Create a window
     GameObject->GraphicsWindow = SDL_CreateWindow("PIXEL POKER", 0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS, SDL_WINDOW_SHOWN);
@@ -127,6 +142,12 @@ void PixelPoker_Init(GameObject *GameObject)
     SDL_SetRenderDrawColor(GameObject->GraphicsRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
     SDL_SetRenderDrawBlendMode(GameObject->GraphicsRenderer, SDL_BLENDMODE_BLEND);
+
+    // Load font
+    std::string fontPath = FONT_PATH + FONT_NAME;
+    Font = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
+
+    TTF_SetFontStyle(Font, TTF_STYLE_BOLD);
 
     // Load background texture
     std::string bgImagePath = MEDIA_PATH + "bg.png";
@@ -138,7 +159,7 @@ void PixelPoker_Init(GameObject *GameObject)
 
     // Load the deal button texture
     std::string dealImagePath = MEDIA_PATH + "deal_button.png";
-    DealButtonTexture = IMG_LoadTexture(GameObject->GraphicsRenderer, dealImagePath.c_str());
+    ButtonTexture = IMG_LoadTexture(GameObject->GraphicsRenderer, dealImagePath.c_str());
 
     // Load the card textures
     std::map<CARD_VALUE, std::string> heartTextures;
@@ -215,8 +236,6 @@ void PixelPoker_Update(GameObject *GameObject)
     switch (GameObject->State)
     {
     case GAME_STATE_INIT:
-        std::cout << "NEW GAME" << std::endl;
-
         // Clear cards
         for (int i = 0; i < MAX_HAND_SIZE; i++)
         {
@@ -233,6 +252,9 @@ void PixelPoker_Update(GameObject *GameObject)
         // Deal cards to the player
         GameObject->SourceDeck.MoveTopCards(GameObject->PlayerHand, MAX_HAND_SIZE);
         
+        GameObject->StatusText = "READY TO PLAY";
+        GameObject->ButtonText = "BET 10";
+
         GameObject->State = GAME_STATE_WAIT_FOR_BET;
 
         break;
@@ -241,6 +263,9 @@ void PixelPoker_Update(GameObject *GameObject)
 
         if (GameObject->ButtonPressed)
         {
+            GameObject->StatusText = "SELECT CARDS TO DISCARD";
+            GameObject->ButtonText = "DEAL";
+
             GameObject->State = GAME_STATE_BET;
             GameObject->ButtonPressed = false;
         }
@@ -289,27 +314,27 @@ void PixelPoker_Update(GameObject *GameObject)
             GameObject->SelectedCards[i] = false;
         }
 
-        std::cout << "Cards in draw pile: " << GameObject->SourceDeck.Size() << std::endl;
-
         GameObject->State = GAME_STATE_OVER;
 
         break;
     
     case GAME_STATE_OVER:
 
-        std::cout << "GAME OVER | ";
-
         GameObject->LastWinnings = CheckWinnings(GameObject);
 
         if (GameObject->LastWinnings > 0)
         {
-            std::cout << "WINNER" << std::endl;
-            GameObject->TotalCoins += (GameObject->LastBet * GameObject->LastWinnings);
+            int winnings = (GameObject->LastBet * GameObject->LastWinnings);
+            GameObject->TotalCoins += winnings;
+
+            GameObject->StatusText = "WON: " + std::to_string(winnings);
         }
         else
         {
-            std::cout << "LOSER" << std::endl;
+            GameObject->StatusText = "LOSE";
         }
+
+        GameObject->ButtonText = "PLAY AGAIN?";
 
         GameObject->State = GAME_STATE_FINISHED;
 
@@ -336,23 +361,30 @@ void PixelPoker_Render(GameObject *GameObject)
     // Render the background image
     SDL_RenderCopy(GameObject->GraphicsRenderer, BackgroundTexture, NULL, NULL);
 
+    // Render the button
+    SDL_RenderCopy(GameObject->GraphicsRenderer, ButtonTexture, NULL, &ButtonRect);
+
+    // Render coin image
+    RenderCoins(GameObject->GraphicsRenderer, GameObject->TotalCoins);
+
+    // Render coin count
+    RenderText(GameObject->GraphicsRenderer, std::to_string(GameObject->TotalCoins), &CoinMessageRect);
+
+    // Render status message
+    RenderText(GameObject->GraphicsRenderer, GameObject->StatusText, &StatusMessageRect);
+
+    // Render button text
+    RenderText(GameObject->GraphicsRenderer, GameObject->ButtonText, &ButtonRect);
+
     switch (GameObject->State)
     {
     case (GAME_STATE_INIT):
         break;
     case (GAME_STATE_WAIT_FOR_BET):
-        // Render the deal button
-        SDL_RenderCopy(GameObject->GraphicsRenderer, DealButtonTexture, NULL, &DealButtonRect);
-
-        RenderCoins(GameObject->GraphicsRenderer, GameObject->TotalCoins);
-
         break;
     case (GAME_STATE_BET):
         break;
     case (GAME_STATE_WAIT_FOR_CARDS):
-        // Render the deal button
-        SDL_RenderCopy(GameObject->GraphicsRenderer, DealButtonTexture, NULL, &DealButtonRect);
-
         // Render the player's hand
         RenderHand(GameObject->GraphicsRenderer, GameObject->PlayerHand);
 
@@ -375,9 +407,6 @@ void PixelPoker_Render(GameObject *GameObject)
     case (GAME_STATE_DEAL):
         break;
     case (GAME_STATE_FINISHED):
-        // Render the deal button
-        SDL_RenderCopy(GameObject->GraphicsRenderer, DealButtonTexture, NULL, &DealButtonRect);
-
         // Render the player's hand
         RenderHand(GameObject->GraphicsRenderer, GameObject->PlayerHand);
 
@@ -400,7 +429,6 @@ void PixelPoker_Render(GameObject *GameObject)
     SDL_RenderPresent(GameObject->GraphicsRenderer);
 
     SDL_Delay(1000 / 60);
-
 }
 
 void PixelPoker_Close(GameObject *GameObject)
@@ -532,7 +560,7 @@ void HandleInput(GameObject *GameObject)
         }
 
         // Check if deal button was pressed
-        if (GameObject->lastClickX > DealButtonRect.x && GameObject->lastClickX < DealButtonRect.x + DealButtonRect.w && GameObject->lastClickY > DealButtonRect.y && GameObject->lastClickY < DealButtonRect.y + DealButtonRect.h)
+        if (GameObject->lastClickX > ButtonRect.x && GameObject->lastClickX < ButtonRect.x + ButtonRect.w && GameObject->lastClickY > ButtonRect.y && GameObject->lastClickY < ButtonRect.y + ButtonRect.h)
         {
             GameObject->ButtonPressed = true;
         }
@@ -595,4 +623,18 @@ int CheckWinnings(GameObject *GameObject)
     }
 
     return LOSE;
+}
+
+void RenderText(SDL_Renderer *Renderer, std::string Text, const SDL_Rect *Rect)
+{
+    SDL_Surface *s;
+    SDL_Texture *t;
+
+    SDL_Color c = {0xFF, 0x00, 0x00};
+
+    s = TTF_RenderText_Solid(Font, Text.c_str(), c);
+    t = SDL_CreateTextureFromSurface(Renderer, s);
+    SDL_RenderCopy(Renderer, t, NULL, Rect);
+    SDL_FreeSurface(s);
+    SDL_DestroyTexture(t);
 }
