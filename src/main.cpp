@@ -13,10 +13,13 @@ const int WINDOW_W_PIXELS = 1280;
 const int WINDOW_H_PIXELS = 800;
 
 const int CARD_SCALING = 4;
-
 const int CARD_W_PIXELS = 62 * CARD_SCALING;
 const int CARD_H_PIXELS = 84 * CARD_SCALING;
-const int CARD_GAP_PIXELS = 8;
+const int CARD_GAP_PIXELS = 6;
+
+const int COIN_SCALING = 4;
+const int COIN_W_PIXELS = 16;
+const int COIN_H_PIXELS = 16;
 
 const int MAX_HAND_SIZE = 5;
 
@@ -38,11 +41,16 @@ typedef struct
     SDL_Window *GraphicsWindow;
     SDL_Renderer *GraphicsRenderer;
     SDL_Texture *BackgroundTexture;
+    SDL_Texture *CoinTexture;
 
     Deck SourceDeck;
     Deck PlayerHand;
     Deck PlayerDiscard;
     
+    uint8_t CoinImageIndex = 0;
+
+    bool SelectedCards[MAX_HAND_SIZE];
+
 } GameObject;
 
 void PixelPoker_Init(GameObject *GameObject);
@@ -91,8 +99,12 @@ void PixelPoker_Init(GameObject *GameObject)
     SDL_SetRenderDrawColor(GameObject->GraphicsRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
     // Load background texture
-    std::string bgImagePath = MEDIA_PATH + "bg.jpg";
+    std::string bgImagePath = MEDIA_PATH + "bg.png";
     GameObject->BackgroundTexture = IMG_LoadTexture(GameObject->GraphicsRenderer, bgImagePath.c_str());
+
+    // Load the coin texture
+    std::string coinImagePath = MEDIA_PATH + "coin.png";
+    GameObject->CoinTexture = IMG_LoadTexture(GameObject->GraphicsRenderer, coinImagePath.c_str());
 
     // Load the card textures
     std::map<CARD_VALUE, std::string> heartTextures;
@@ -183,6 +195,8 @@ void PixelPoker_Update(GameObject *GameObject)
             DrawCard(GameObject->SourceDeck, GameObject->PlayerHand, MAX_HAND_SIZE);
         }
 
+        GameObject->CoinImageIndex++;
+
         break;
 
     case GAME_STATE_FINISHED:
@@ -214,6 +228,37 @@ void PixelPoker_Render(GameObject *GameObject)
 
     // Render the player's hand
     RenderHand(GameObject->GraphicsRenderer, GameObject->PlayerHand);
+
+    // Render selected cards
+    SDL_SetRenderDrawBlendMode(GameObject->GraphicsRenderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(GameObject->GraphicsRenderer, 0xFF, 0x00, 0x00, 0x50);
+
+    for (int i = 0; i < MAX_HAND_SIZE; i++)
+    {
+        if (GameObject->SelectedCards[i])
+        {
+            SDL_Rect selectionRect = {10, 10, 200, 200};
+            SDL_RenderFillRect(GameObject->GraphicsRenderer, &selectionRect);
+        }
+    }
+
+    // TODO: keep track of the position of each card instead of deriving it from the relative list position, then it can be rendered easily
+
+    // TODO: raining coins animation on jackpot, why not?
+
+    // TODO: mouse inputs
+
+    // TODO: betting and scoring system
+
+    // TODO: gameplay logic and game over
+
+    // TODO: font rendering
+
+    // Render coin total
+    // TODO: Really crude animation
+    SDL_Rect coinSrcRect = {((GameObject->CoinImageIndex % 32) / 8) * COIN_W_PIXELS, 0, COIN_W_PIXELS, COIN_H_PIXELS};
+    SDL_Rect coinDestRect = {10, 10, COIN_W_PIXELS * COIN_SCALING, COIN_H_PIXELS * COIN_SCALING};
+    SDL_RenderCopy(GameObject->GraphicsRenderer, GameObject->CoinTexture, &coinSrcRect, &coinDestRect);
 
     SDL_RenderPresent(GameObject->GraphicsRenderer);
 
