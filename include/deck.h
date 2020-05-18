@@ -2,7 +2,6 @@
 #define DECK_H
 
 #include <vector>
-#include <set>
 #include "card.h"
 
 // A collection of cards

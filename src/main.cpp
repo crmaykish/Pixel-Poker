@@ -60,7 +60,7 @@ typedef enum
     GAME_STATE_EXIT
  } GameState;
 
-typedef struct
+struct GameObject
 {
     // UI
     SDL_Window *GraphicsWindow;
@@ -84,7 +84,7 @@ typedef struct
     std::string StatusText;
     std::string ButtonText;
 
-} GameObject;
+};
 
 // FUNCTION PROTOTYPES
 void PixelPoker_Init(GameObject *GameObject);
