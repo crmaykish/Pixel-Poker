@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "card.h"
+#include "deck.h"
 
 TEST(DeckTest, FullHousePassTest)
 {
