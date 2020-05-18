@@ -1,28 +1,28 @@
 #include "gtest/gtest.h"
-#include "deck.h"
+#include "poker_hand.h"
 
-TEST(DeckTest, FullHousePassTest)
+TEST(PokerHandTest, FullHousePassTest)
 {
-    Deck d = Deck();
+    PokerHand d = PokerHand();
 
-    d.AddNewCard(Card(HEART, TWO));
-    d.AddNewCard(Card(DIAMOND, TWO));
-    d.AddNewCard(Card(SPADE, TWO));
-    d.AddNewCard(Card(CLUB, THREE));
-    d.AddNewCard(Card(DIAMOND, THREE));
+    d.AddCard({HEART, TWO});
+    d.AddCard({DIAMOND, TWO});
+    d.AddCard({SPADE, TWO});
+    d.AddCard({CLUB, THREE});
+    d.AddCard({DIAMOND, THREE});
 
     EXPECT_EQ(5, d.IsFullHouse().size());
 }
 
-TEST(DeckTest, FullHouseFailTest)
+TEST(PokerHandTest, FullHouseFailTest)
 {
-    Deck d = Deck();
+    PokerHand d = PokerHand();
 
-    d.AddNewCard(Card(HEART, TWO));
-    d.AddNewCard(Card(DIAMOND, TWO));
-    d.AddNewCard(Card(SPADE, TWO));
-    d.AddNewCard(Card(CLUB, THREE));
-    d.AddNewCard(Card(DIAMOND, FOUR));
+    d.AddCard({HEART, TWO});
+    d.AddCard({DIAMOND, TWO});
+    d.AddCard({SPADE, TWO});
+    d.AddCard({CLUB, THREE});
+    d.AddCard({DIAMOND, FOUR});
 
     EXPECT_EQ(0, d.IsFullHouse().size());
 }

@@ -9,34 +9,21 @@
 class Deck
 {
     private:
-        std::vector<Card> cards;
-        void AddNewCardAt(Card card, int index);
+    protected:
+        std::vector<PlayingCard> cards;
+        void AddCardAt(PlayingCard card, int index);
     public:
-        Deck();
-        ~Deck();
-
         // Statuses
         void Shuffle();
         bool IsEmpty();
         int Size();
-        Card& CardAt(int index);
+        PlayingCard& CardAt(int index);
 
         // Deck manipulation
-        void AddNewCard(Card card);
+        void AddCard(PlayingCard card);
         void MoveTopCards(Deck& destinationDeck, int count = 1);
         void MoveCardAt(Deck& destinationDeck, int sourceIndex);
         void MoveTopCardTo(Deck& destinationDeck, int destinationIndex);
-
-        // Deck conditions
-        std::set<int> IsJacksOrBetter();
-        std::set<int> IsTwoPair();
-        std::set<int> IsThreeOfAKind();
-        std::set<int> IsStraight();
-        std::set<int> IsFlush();
-        std::set<int> IsFullHouse();
-        std::set<int> IsFourOfAKind();
-        std::set<int> IsStraightFlush();
-        std::set<int> IsRoyalFlush();
 };
 
 

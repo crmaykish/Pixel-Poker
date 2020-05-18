@@ -8,6 +8,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "deck.h"
+#include "poker_hand.h"
 
 // CONSTANTS
 
@@ -69,8 +70,8 @@ typedef struct
 
     // Game Data
     Deck SourceDeck;
-    Deck PlayerHand;
     Deck PlayerDiscard;
+    PokerHand PlayerHand;
 
     // Game State
     GameState State;
@@ -104,7 +105,7 @@ int CheckWinnings(GameObject *GameObject);
 void RenderText(SDL_Renderer *Renderer, std::string Text, const SDL_Rect *Rect);
 
 // GLOBAL VARIABLES
-std::map<CARD_SUIT, std::map<CARD_VALUE, std::string>> CardTextureMap;
+std::map<PlayingCardSuit, std::map<PlayingCardValue, std::string>> CardTextureMap;
 SDL_Texture *BackgroundTexture;
 SDL_Texture *CoinTexture;
 SDL_Texture *ButtonTexture;
@@ -163,7 +164,7 @@ void PixelPoker_Init(GameObject *GameObject)
     ButtonTexture = IMG_LoadTexture(GameObject->GraphicsRenderer, dealImagePath.c_str());
 
     // Load the card textures
-    std::map<CARD_VALUE, std::string> heartTextures;
+    std::map<PlayingCardValue, std::string> heartTextures;
     heartTextures.insert({ACE, "card_1_heart.png"});
     heartTextures.insert({TWO, "card_2_heart.png"});
     heartTextures.insert({THREE, "card_3_heart.png"});
@@ -179,7 +180,7 @@ void PixelPoker_Init(GameObject *GameObject)
     heartTextures.insert({KING, "card_13_heart.png"});
     CardTextureMap.insert({HEART, heartTextures});
 
-    std::map<CARD_VALUE, std::string> diamondTextures;
+    std::map<PlayingCardValue, std::string> diamondTextures;
     diamondTextures.insert({ACE, "card_1_diamond.png"});
     diamondTextures.insert({TWO, "card_2_diamond.png"});
     diamondTextures.insert({THREE, "card_3_diamond.png"});
@@ -195,7 +196,7 @@ void PixelPoker_Init(GameObject *GameObject)
     diamondTextures.insert({KING, "card_13_diamond.png"});
     CardTextureMap.insert({DIAMOND, diamondTextures});
 
-    std::map<CARD_VALUE, std::string> cloverTextures;
+    std::map<PlayingCardValue, std::string> cloverTextures;
     cloverTextures.insert({ACE, "card_1_clover.png"});
     cloverTextures.insert({TWO, "card_2_clover.png"});
     cloverTextures.insert({THREE, "card_3_clover.png"});
@@ -211,7 +212,7 @@ void PixelPoker_Init(GameObject *GameObject)
     cloverTextures.insert({KING, "card_13_clover.png"});
     CardTextureMap.insert({CLUB, cloverTextures});
 
-    std::map<CARD_VALUE, std::string> spadeTextures;
+    std::map<PlayingCardValue, std::string> spadeTextures;
     spadeTextures.insert({ACE, "card_1_spade.png"});
     spadeTextures.insert({TWO, "card_2_spade.png"});
     spadeTextures.insert({THREE, "card_3_spade.png"});
@@ -436,58 +437,59 @@ void CreateDeck(Deck& deck)
 {
     if (deck.IsEmpty())
     {
-        deck.AddNewCard(Card(HEART, ACE));
-        deck.AddNewCard(Card(HEART, TWO));
-        deck.AddNewCard(Card(HEART, THREE));
-        deck.AddNewCard(Card(HEART, FOUR));
-        deck.AddNewCard(Card(HEART, FIVE));
-        deck.AddNewCard(Card(HEART, SIX));
-        deck.AddNewCard(Card(HEART, SEVEN));
-        deck.AddNewCard(Card(HEART, EIGHT));
-        deck.AddNewCard(Card(HEART, NINE));
-        deck.AddNewCard(Card(HEART, TEN));
-        deck.AddNewCard(Card(HEART, JACK));
-        deck.AddNewCard(Card(HEART, QUEEN));
-        deck.AddNewCard(Card(HEART, KING));
-        deck.AddNewCard(Card(DIAMOND, ACE));
-        deck.AddNewCard(Card(DIAMOND, TWO));
-        deck.AddNewCard(Card(DIAMOND, THREE));
-        deck.AddNewCard(Card(DIAMOND, FOUR));
-        deck.AddNewCard(Card(DIAMOND, FIVE));
-        deck.AddNewCard(Card(DIAMOND, SIX));
-        deck.AddNewCard(Card(DIAMOND, SEVEN));
-        deck.AddNewCard(Card(DIAMOND, EIGHT));
-        deck.AddNewCard(Card(DIAMOND, NINE));
-        deck.AddNewCard(Card(DIAMOND, TEN));
-        deck.AddNewCard(Card(DIAMOND, JACK));
-        deck.AddNewCard(Card(DIAMOND, QUEEN));
-        deck.AddNewCard(Card(DIAMOND, KING));
-        deck.AddNewCard(Card(CLUB, ACE));
-        deck.AddNewCard(Card(CLUB, TWO));
-        deck.AddNewCard(Card(CLUB, THREE));
-        deck.AddNewCard(Card(CLUB, FOUR));
-        deck.AddNewCard(Card(CLUB, FIVE));
-        deck.AddNewCard(Card(CLUB, SIX));
-        deck.AddNewCard(Card(CLUB, SEVEN));
-        deck.AddNewCard(Card(CLUB, EIGHT));
-        deck.AddNewCard(Card(CLUB, NINE));
-        deck.AddNewCard(Card(CLUB, TEN));
-        deck.AddNewCard(Card(CLUB, JACK));
-        deck.AddNewCard(Card(CLUB, QUEEN));
-        deck.AddNewCard(Card(CLUB, KING));
-        deck.AddNewCard(Card(SPADE, ACE));
-        deck.AddNewCard(Card(SPADE, TWO));
-        deck.AddNewCard(Card(SPADE, THREE));
-        deck.AddNewCard(Card(SPADE, FOUR));
-        deck.AddNewCard(Card(SPADE, FIVE));
-        deck.AddNewCard(Card(SPADE, SIX));
-        deck.AddNewCard(Card(SPADE, SEVEN));
-        deck.AddNewCard(Card(SPADE, EIGHT));
-        deck.AddNewCard(Card(SPADE, NINE));
-        deck.AddNewCard(Card(SPADE, TEN));
-        deck.AddNewCard(Card(SPADE, JACK));
-        deck.AddNewCard(Card(SPADE, QUEEN));
-        deck.AddNewCard(Card(SPADE, KING));
+        deck.AddCard({HEART, ACE});
+        deck.AddCard({HEART, ACE});
+        deck.AddCard({HEART, TWO});
+        deck.AddCard({HEART, THREE});
+        deck.AddCard({HEART, FOUR});
+        deck.AddCard({HEART, FIVE});
+        deck.AddCard({HEART, SIX});
+        deck.AddCard({HEART, SEVEN});
+        deck.AddCard({HEART, EIGHT});
+        deck.AddCard({HEART, NINE});
+        deck.AddCard({HEART, TEN});
+        deck.AddCard({HEART, JACK});
+        deck.AddCard({HEART, QUEEN});
+        deck.AddCard({HEART, KING});
+        deck.AddCard({DIAMOND, ACE});
+        deck.AddCard({DIAMOND, TWO});
+        deck.AddCard({DIAMOND, THREE});
+        deck.AddCard({DIAMOND, FOUR});
+        deck.AddCard({DIAMOND, FIVE});
+        deck.AddCard({DIAMOND, SIX});
+        deck.AddCard({DIAMOND, SEVEN});
+        deck.AddCard({DIAMOND, EIGHT});
+        deck.AddCard({DIAMOND, NINE});
+        deck.AddCard({DIAMOND, TEN});
+        deck.AddCard({DIAMOND, JACK});
+        deck.AddCard({DIAMOND, QUEEN});
+        deck.AddCard({DIAMOND, KING});
+        deck.AddCard({CLUB, ACE});
+        deck.AddCard({CLUB, TWO});
+        deck.AddCard({CLUB, THREE});
+        deck.AddCard({CLUB, FOUR});
+        deck.AddCard({CLUB, FIVE});
+        deck.AddCard({CLUB, SIX});
+        deck.AddCard({CLUB, SEVEN});
+        deck.AddCard({CLUB, EIGHT});
+        deck.AddCard({CLUB, NINE});
+        deck.AddCard({CLUB, TEN});
+        deck.AddCard({CLUB, JACK});
+        deck.AddCard({CLUB, QUEEN});
+        deck.AddCard({CLUB, KING});
+        deck.AddCard({SPADE, ACE});
+        deck.AddCard({SPADE, TWO});
+        deck.AddCard({SPADE, THREE});
+        deck.AddCard({SPADE, FOUR});
+        deck.AddCard({SPADE, FIVE});
+        deck.AddCard({SPADE, SIX});
+        deck.AddCard({SPADE, SEVEN});
+        deck.AddCard({SPADE, EIGHT});
+        deck.AddCard({SPADE, NINE});
+        deck.AddCard({SPADE, TEN});
+        deck.AddCard({SPADE, JACK});
+        deck.AddCard({SPADE, QUEEN});
+        deck.AddCard({SPADE, KING});
 
         deck.Shuffle();
     }
@@ -499,11 +501,11 @@ void RenderHand(SDL_Renderer *Renderer, Deck& hand)
     {
         SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
         
-        Card c = hand.CardAt(i);
+        PlayingCard c = hand.CardAt(i);
         
-        std::map<CARD_VALUE, std::string> valueStrings = CardTextureMap.at(c.GetSuit());
+        std::map<PlayingCardValue, std::string> valueStrings = CardTextureMap.at(c.Suit);
 
-        std::string texturePath = MEDIA_PATH + valueStrings.at(c.GetValue());
+        std::string texturePath = MEDIA_PATH + valueStrings.at(c.Value);
 
         // TODO: this is loading the texture on every iteration. That's bad.
         // Cache these textures as they are loaded or load them all up front
