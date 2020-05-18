@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "pp_interface.h"
+#include "pp_game_state.h"
 
 class Scene
 {
@@ -15,7 +16,7 @@ class Scene
             ElementList.push_back(element);
         }
 
-        void Update(Game& game)
+        void Update(GameState& game)
         {
             for (auto e : ElementList)
             {
@@ -23,7 +24,7 @@ class Scene
             }
         }
 
-        void Render(Game& game, Renderer& renderer)
+        void Render(GameState& game, Renderer& renderer)
         {
             for (auto e : ElementList)
             {

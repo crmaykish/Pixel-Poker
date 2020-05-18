@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include "pp_game_state.h"
 
 class InterfaceElement
 {
@@ -12,8 +13,8 @@ class InterfaceElement
         SDL_Texture *tex;
         TTF_Font *font;
     public:
-        virtual void Update(Game& game);
-        virtual void Render(Game& game, Renderer& renderer);
+        virtual void Update(GameState& game);
+        virtual void Render(GameState& game, Renderer& renderer);
 };
 
 class InterfaceButton : public InterfaceElement
@@ -22,12 +23,12 @@ class InterfaceButton : public InterfaceElement
         bool pressed;
 
     public:
-        void Update(Game& game)
+        void Update(GameState& game)
         {
-            pressed = PointInRect(&game.LastClickedPosition, &rect);
+            pressed = PointInRect(&game.State.LastClickedPosition, &rect);
         }
 
-        void Render(Game& game, Renderer& renderer)
+        void Render(GameState& game, Renderer& renderer)
         {
             // TODO: tell the renderer how to draw this
         }
