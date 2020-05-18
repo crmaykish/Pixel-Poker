@@ -15,6 +15,7 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
  - Sound effects
  - Shuffle and dealing animations
  - Highlight win type and amount
+ - Track some basic statistics (win rate, bet amounts, number of hands, etc)
 
 ## Bugs
 - Sometimes drawing only four cards

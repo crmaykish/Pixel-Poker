@@ -7,8 +7,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "deck.h"
-#include "poker_hand.h"
+#include "pp_deck.h"
+#include "pp_poker_hand.h"
 
 // CONSTANTS
 
@@ -46,6 +46,7 @@ const int deal_button_offset_y = WINDOW_H_PIXELS - DEAL_BUTTON_H_PIXELS - DEAL_B
 const SDL_Rect ButtonRect = {deal_button_offset_x, deal_button_offset_y, DEAL_BUTTON_W_PIXELS, DEAL_BUTTON_H_PIXELS};
 const SDL_Rect StatusMessageRect = {8, WINDOW_H_PIXELS - 64, WINDOW_W_PIXELS / 4, 64};
 const SDL_Rect CoinMessageRect = {8 + COIN_W_PIXELS * COIN_SCALING, 8, WINDOW_W_PIXELS / 8, 64};
+
 
 // DEFINITIONS
 typedef enum

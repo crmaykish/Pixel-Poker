@@ -1,8 +1,8 @@
-#ifndef POKER_HAND_H
-#define POKER_HAND_H
+#ifndef PP_POKER_HAND_H
+#define pp_POKER_HAND_H
 
 #include <set>
-#include "deck.h"
+#include "pp_deck.h"
 
 class PokerHand : public Deck
 {
