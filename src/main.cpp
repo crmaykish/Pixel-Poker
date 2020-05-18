@@ -327,12 +327,6 @@ void PixelPoker_Update(GameObject *GameObject)
         {
             int winnings = (GameObject->LastBet * GameObject->LastWinnings);
             GameObject->TotalCoins += winnings;
-
-            GameObject->StatusText = "WON: " + std::to_string(winnings);
-        }
-        else
-        {
-            GameObject->StatusText = "GAME OVER";
         }
 
         GameObject->ButtonText = "PLAY AGAIN";
@@ -540,8 +534,6 @@ void HandleInput(GameObject *GameObject)
         else if (event.type == SDL_MOUSEBUTTONDOWN)
         {
             SDL_GetMouseState(&GameObject->lastClickX, &GameObject->lastClickY);
-
-            std::cout << GameObject->lastClickX << ", " << GameObject->lastClickY << std::endl;
         }
     }
 
@@ -587,7 +579,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "ROYAL FLUSH" << std::endl;
+        GameObject->StatusText = "ROYAL FLUSH";
         return ROYAL_FLUSH;
     }
 
@@ -596,7 +588,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "STRAIGHT FLUSH" << std::endl;
+        GameObject->StatusText = "STRAIGHT FLUSH";
         return FOUR_OF_A_KIND;
     }
 
@@ -605,7 +597,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "FOUR OF A KIND" << std::endl;
+        GameObject->StatusText = "FOUR OF A KIND";
         return FOUR_OF_A_KIND;
     }
     
@@ -614,7 +606,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "FULL HOUSE" << std::endl;
+        GameObject->StatusText = "FULL HOUSE";
         return FULL_HOUSE;
     }
     
@@ -623,7 +615,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "FLUSH" << std::endl;
+        GameObject->StatusText = "FLUSH";
         return FLUSH;
     }
 
@@ -632,7 +624,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "STRAIGHT" << std::endl;
+        GameObject->StatusText = "STRAIGHT";
         return STRAIGHT;
     }
 
@@ -641,7 +633,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "THREE OF A KIND" << std::endl;
+        GameObject->StatusText = "THREE OF A KIND";
         return THREE_OF_A_KIND;
     }
 
@@ -650,7 +642,7 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "TWO PAIR" << std::endl;
+        GameObject->StatusText = "TWO PAIR";
         return TWO_PAIR;
     }
 
@@ -659,10 +651,11 @@ int CheckWinnings(GameObject *GameObject)
 
     if (GameObject->WinningCards.size() > 0)
     {
-        std::cout << "JACKS OR BETTER" << std::endl;
+        GameObject->StatusText = "JACKS OR BETTER";
         return LOSE;
     }
 
+    GameObject->StatusText = "GAME OVER";
     return LOSE;
 }
 
