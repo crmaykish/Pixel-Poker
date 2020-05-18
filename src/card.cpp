@@ -268,13 +268,13 @@ std::set<int> Deck::IsFullHouse()
         // is there a pair with a different value?
         int firstIndex = *result.begin();
 
-        CARD_SUIT threesSuit = cards.at(firstIndex).GetSuit();
+        CARD_VALUE threesValue = cards.at(firstIndex).GetValue();
 
         bool pair = false;
 
         for (int i = 0; i < cards.size(); i++)
         {
-            if (CardAt(i).GetSuit() != threesSuit){
+            if (CardAt(i).GetValue() != threesValue){
                 for (int j = i + 1; j < cards.size(); j++)
                 {
                     if (CardAt(i).GetValue() == CardAt(j).GetValue())
@@ -292,6 +292,10 @@ std::set<int> Deck::IsFullHouse()
             result.insert(2);
             result.insert(3);
             result.insert(4);
+        }
+        else 
+        {
+            result.clear();
         }
     }
     else
