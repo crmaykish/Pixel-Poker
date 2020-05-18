@@ -9,13 +9,9 @@
 
 On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-ttf-dev`
 
-## Todo
- - subclass deck to poker hand and limit to 5 cards
- - move cards up on the screen to make UI bigger
- - Add bet select UI
- - out of money handling
- - high scores
- - add card back graphic
- - card draw animations
- - sound effects / music
- - fresh deck vs recycled every round option
+## Missing Features
+ - Variable betting amounts
+ - Reset on running out of money
+ - Sound effects
+ - Shuffle and dealing animations
+ - Highlight win type and amount
