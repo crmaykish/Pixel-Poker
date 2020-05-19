@@ -1,20 +1,6 @@
 #include "pp_renderer.h"
 #include "pp_game_state.h"
 
-// void RenderText(SDL_Renderer *Renderer, std::string Text, const SDL_Rect *Rect)
-// {
-//     SDL_Surface *s;
-//     SDL_Texture *t;
-
-//     SDL_Color c = {0xFF, 0x00, 0x00};
-
-//     s = TTF_RenderText_Solid(Font, Text.c_str(), c);
-//     t = SDL_CreateTextureFromSurface(Renderer, s);
-//     SDL_RenderCopy(Renderer, t, NULL, Rect);
-//     SDL_FreeSurface(s);
-//     SDL_DestroyTexture(t);
-// }
-
 void Renderer::HandleInput(GameState &gameState)
 {
     SDL_Event event;
@@ -80,9 +66,9 @@ void Renderer::RenderTexture(SDL_Texture *tex, SDL_Rect *rect)
     SDL_RenderCopy(SDLRenderer, tex, NULL, rect);
 }
 
-void Renderer::RenderText(std::string text, TTF_Font *font, SDL_Color *color, SDL_Rect *rect)
+void Renderer::RenderText(std::string text, TTF_Font *font, SDL_Color color, SDL_Rect *rect)
 {
-    SDL_Surface *s = TTF_RenderText_Solid(font, text.c_str(), *color);
+    SDL_Surface *s = TTF_RenderText_Solid(font, text.c_str(), color);
     SDL_Texture *t = SDL_CreateTextureFromSurface(SDLRenderer, s);
 
     SDL_RenderCopy(SDLRenderer, t, NULL, rect);
@@ -94,6 +80,11 @@ void Renderer::RenderText(std::string text, TTF_Font *font, SDL_Color *color, SD
 SDL_Texture *Renderer::LoadTexture(std::string fileName)
 {
     return IMG_LoadTexture(SDLRenderer, fileName.c_str());
+}
+
+TTF_Font *Renderer::LoadFont(std::string fileName)
+{
+    return TTF_OpenFont(fileName.c_str(), DEFAULT_FONT_SIZE);
 }
 
 void Renderer::Clear()

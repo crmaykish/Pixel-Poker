@@ -15,18 +15,43 @@ void PixelPoker::Init()
     scenes.push_back(Scene());
     Scene &s = scenes.at(0);
 
-    GameCommand *hello = new HelloCommand();
+    // TODO: instantiate a few commands in the game init instead of here
+    // GameCommand *hello = new HelloCommand();
 
-    for (int i = 0; i < 4; i++)
-    {
-        InterfaceButton *bigButton = new InterfaceButton();
-        bigButton->SetRect(10 + (i * 300), 10, 300, 100);
-        bigButton->SetTexturePressed(assetManager.GetTexture(TEXTURE_BG_0));
-        bigButton->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
-        bigButton->SetCommand(hello);
+    // TODO: just have commands set flags instead of doing the work themselves
+    // then let the main game update code do the work
 
-        s.AddInterfaceElement(bigButton);
-    }
+    int buttonW = 400;
+    int buttonH = 120;
+    int buttonOffset = 20;
+
+    // Background Image
+    InterfaceStaticImage *background = new InterfaceStaticImage();
+    background->SetRect(0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS);
+    background->SetTexture(assetManager.GetTexture(TEXTURE_BG_0));
+    
+    s.AddInterfaceElement(background);
+
+    // Bet Button
+    InterfaceButton *buttonBet = new InterfaceButton();
+    buttonBet->SetRect(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
+    buttonBet->SetTexturePressed(assetManager.GetTexture(TEXTURE_BG_0));
+    buttonBet->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
+    buttonBet->SetFont(assetManager.GetFont(FONT_UI_0));
+    buttonBet->SetText("BET");
+    buttonBet->SetCommand(new BetCommand());
+    s.AddInterfaceElement(buttonBet);
+
+    // Deal Button
+    InterfaceButton *buttonDeal = new InterfaceButton();
+    buttonDeal->SetRect(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
+    buttonDeal->SetTexturePressed(assetManager.GetTexture(TEXTURE_BG_0));
+    buttonDeal->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
+    buttonDeal->SetFont(assetManager.GetFont(FONT_UI_0));
+    buttonDeal->SetText("DEAL");
+    buttonDeal->SetCommand(new DealCommand());
+    s.AddInterfaceElement(buttonDeal);
+
 }
 
 void PixelPoker::Run()

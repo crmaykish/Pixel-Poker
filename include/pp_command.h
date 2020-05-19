@@ -6,17 +6,32 @@
 
 class GameCommand
 {
-    public:
-        virtual void Execute(GameState &gameState) = 0;
+public:
+    virtual void Execute(GameState &gameState) = 0;
 };
 
-class HelloCommand : public GameCommand
+/**
+ * @brief Command to signal a bet has been placed
+ */
+class BetCommand : public GameCommand
 {
-    public:
-        void Execute(GameState &gameState)
-        {
-            std::cout << "HELLO" << std::endl;
-        }
+public:
+    void Execute(GameState &gameState)
+    {
+        std::cout << "BET" << std::endl;
+    }
+};
+
+/**
+ * @brief Command to signal a deal of cards
+ */
+class DealCommand : public GameCommand
+{
+public:
+    void Execute(GameState &gameState)
+    {
+        std::cout << "DEAL" << std::endl;
+    }
 };
 
 #endif

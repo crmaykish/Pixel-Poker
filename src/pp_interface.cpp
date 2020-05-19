@@ -7,6 +7,26 @@ void InterfaceElement::SetRect(int x, int y, int w, int h)
     rect = {x, y, w, h};
 }
 
+// InterfaceStaticImage
+
+void InterfaceStaticImage::Update(GameState &game)
+{
+}
+
+void InterfaceStaticImage::Render(GameState &game, Renderer &renderer)
+{
+    renderer.RenderTexture(texture, &rect);
+}
+
+void InterfaceStaticImage::Destroy()
+{
+}
+
+void InterfaceStaticImage::SetTexture(SDL_Texture *tex)
+{
+    texture = tex;
+}
+
 // InterfaceButton
 
 InterfaceButton::InterfaceButton(bool act, bool vis)
@@ -14,23 +34,34 @@ InterfaceButton::InterfaceButton(bool act, bool vis)
     active = act;
     visible = vis;
 
-    pressed = false;
+    currentlyPressed = false;
+    previouslyPressed = false;
 }
 
 void InterfaceButton::Update(GameState &game)
 {
+    // TODO: based on game state, update this button appropriately
+
     if (active)
     {
-        pressed = game.State.MouseClicked && PointInRect(&game.State.MousePosition, &rect);
+        previouslyPressed = currentlyPressed;
 
-        if (pressed)
+        bool mouseClicked = game.State.MouseClicked;
+        bool mouseOnButton = PointInRect(&game.State.MousePosition, &rect);
+
+        currentlyPressed = mouseClicked && mouseOnButton;
+
+        if (previouslyPressed && !currentlyPressed && mouseOnButton)
         {
-            // TODO: this is going to run constantly while the button is pressed
             if (command != NULL)
             {
                 command->Execute(game);
             }
         }
+    }
+    else
+    {
+        // TODO: reset the button to a safe state
     }
 }
 
@@ -42,6 +73,7 @@ void InterfaceButton::Render(GameState &game, Renderer &renderer)
     if (visible)
     {
         renderer.RenderTexture(GetTexture(), &rect);
+        renderer.RenderText(text, font, {0xFF, 0xFF, 0xFF, 0xFF}, &rect);
     }
 }
 
@@ -61,7 +93,17 @@ void InterfaceButton::SetTextureUnpressed(SDL_Texture *tex)
 
 SDL_Texture *InterfaceButton::GetTexture()
 {
-    return (pressed ? texPressed : texUnpressed);
+    return (currentlyPressed ? texPressed : texUnpressed);
+}
+
+void InterfaceButton::SetText(std::string t)
+{
+    text = t;
+}
+
+void InterfaceButton::SetFont(TTF_Font *f)
+{
+    font = f;
 }
 
 void InterfaceButton::SetCommand(GameCommand *com)

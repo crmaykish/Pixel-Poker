@@ -26,10 +26,13 @@ SDL_Texture *AssetManager::GetTexture(std::string key)
 
 TTF_Font *AssetManager::GetFont(std::string key)
 {
-    // std::string fontPath = FONT_PATH + FONT_NAME;
-    // Font = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
+    // TODO: does no caching, always loads from a file
+    TTF_Font *f = NULL;
 
-    // TTF_SetFontStyle(Font, TTF_STYLE_BOLD);
+    if (f == NULL)
+    {
+        f = renderer->LoadFont(FONT_PATH + key);
+    }
 
-    return NULL;
+    return f;
 }

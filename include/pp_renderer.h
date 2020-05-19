@@ -58,12 +58,13 @@ public:
     void HandleInput(GameState &gameState);
 
     void RenderTexture(SDL_Texture *tex, SDL_Rect *rect);
-    void RenderText(std::string text, TTF_Font *font, SDL_Color *color, SDL_Rect *rect);
+    void RenderText(std::string text, TTF_Font *font, SDL_Color color, SDL_Rect *rect);
 
     void Clear();
     void Present();
 
     SDL_Texture *LoadTexture(std::string fileName);
+    TTF_Font *LoadFont(std::string fileName);
 };
 
 #endif

@@ -26,13 +26,28 @@ public:
     void SetRect(int x, int y, int w, int h);
 };
 
+class InterfaceStaticImage : public InterfaceElement
+{
+private:
+    SDL_Texture *texture;
+
+public:
+    void Update(GameState &game);
+    void Render(GameState &game, Renderer &renderer);
+    void SetTexture(SDL_Texture *tex);
+    void Destroy();
+};
+
 class InterfaceButton : public InterfaceElement
 {
 private:
-    bool pressed;
+    bool previouslyPressed;
+    bool currentlyPressed;
+    GameCommand *command;
     SDL_Texture *texPressed;
     SDL_Texture *texUnpressed;
-    GameCommand *command;
+    std::string text;
+    TTF_Font *font;
 
 protected:
     SDL_Texture *GetTexture();
@@ -43,7 +58,9 @@ public:
     void Render(GameState &game, Renderer &renderer);
     void SetTexturePressed(SDL_Texture *tex);
     void SetTextureUnpressed(SDL_Texture *tex);
+    void SetText(std::string t);
     void SetCommand(GameCommand *com);
+    void SetFont(TTF_Font *f);
     void Destroy();
 };
 
