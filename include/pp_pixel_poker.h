@@ -5,22 +5,38 @@
 
 #include "pp_game_state.h"
 #include "pp_renderer.h"
+#include "pp_asset_manager.h"
 #include "pp_scene.h"
+
+/**
+ * @brief State of the Pixel Poker application
+ */
+enum PixelPokerRunState
+{
+    PP_RUNNING,
+    PP_EXIT
+};
 
 /**
  * @brief Top-level Pixel Poker game object
  */
 class PixelPoker
 {
-    private:
-        GameState game;
-        Renderer renderer;
-        std::vector<Scene> scenes;
-    public:
-        void Init();
-        void Run();
-        void Destroy();
-        bool IsRunning();
+private:
+    PixelPokerRunState RunState;
+    GameState game;
+    Renderer renderer;
+    AssetManager assetManager;
+    std::vector<Scene> scenes;
+    int activeScene;
+
+    Scene &GetActiveScene();
+
+public:
+    void Init();
+    void Run();
+    void Destroy();
+    bool IsRunning();
 };
 
 #endif

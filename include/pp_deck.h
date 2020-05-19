@@ -12,13 +12,11 @@ class Deck
         std::vector<PlayingCard> cards;
         void AddCardAt(PlayingCard card, int index);
     public:
-        // Statuses
+        Deck(bool standardDeck = false, bool shuffled = false);
         void Shuffle();
         bool IsEmpty();
         int Size();
         PlayingCard& CardAt(int index);
-
-        // Deck manipulation
         void AddCard(PlayingCard card);
         void MoveTopCards(Deck& destinationDeck, int count = 1);
         void MoveCardAt(Deck& destinationDeck, int sourceIndex);

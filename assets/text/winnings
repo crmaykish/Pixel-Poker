@@ -1,0 +1,10 @@
+royal_flush         250
+straight_flush      50
+4_of_a_kind         25
+full_house          9
+flush               6
+straight            4
+3_of_a_kind         3
+two_pair            2
+jacks               1
+lose                0

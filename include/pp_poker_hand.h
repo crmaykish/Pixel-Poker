@@ -1,5 +1,5 @@
 #ifndef PP_POKER_HAND_H
-#define pp_POKER_HAND_H
+#define PP_POKER_HAND_H
 
 #include <set>
 #include "pp_deck.h"

@@ -7,30 +7,30 @@
 
 class Scene
 {
-    private:
-        std::vector<InterfaceElement> ElementList;
-    public:
+private:
+    std::vector<InterfaceElement*> ElementList;
 
-        void AddInterfaceElement(InterfaceElement& element)
-        {
-            ElementList.push_back(element);
-        }
+public:
+    void AddInterfaceElement(InterfaceElement *element)
+    {
+        ElementList.push_back(element);
+    }
 
-        void Update(GameState& game)
+    void Update(GameState &game)
+    {
+        for (auto e : ElementList)
         {
-            for (auto e : ElementList)
-            {
-                e.Update(game);
-            }
+            e->Update(game);
         }
+    }
 
-        void Render(GameState& game, Renderer& renderer)
+    void Render(GameState &game, Renderer &renderer)
+    {
+        for (auto e : ElementList)
         {
-            for (auto e : ElementList)
-            {
-                e.Render(game, renderer);
-            }
+            e->Render(game, renderer);
         }
+    }
 };
 
 #endif

@@ -4,7 +4,7 @@ find_package(SDL2_ttf REQUIRED)
 
 set(BINARY ${CMAKE_PROJECT_NAME})
 
-file(GLOB SOURCES "*.h" "*.cpp")
+file(GLOB SOURCES "*.cpp")
 
 set(SOURCES ${SOURCES})
 

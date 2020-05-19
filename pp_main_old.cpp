@@ -14,98 +14,14 @@
 #include "pp_deck.h"
 #include "pp_poker_hand.h"
 
-// CONSTANTS
-
-// TODO: Handle these paths dynamically
-const std::string MEDIA_PATH = "/home/colin/nas/projects/cpp_games/pixel_poker/media/images/";
-const std::string FONT_PATH = "/usr/share/fonts/truetype/freefont/";
-const std::string FONT_NAME = "FreeMono.ttf";
-const int FONT_SIZE = 32;
-
-const int WINDOW_W_PIXELS = 1280;
-const int WINDOW_H_PIXELS = 800;
-
-const int CARD_SCALING = 4;
-const int CARD_W_PIXELS = 62 * CARD_SCALING;
-const int CARD_H_PIXELS = 84 * CARD_SCALING;
-const int CARD_GAP_PIXELS = 6;
-
-const int COIN_SCALING = 4;
-const int COIN_W_PIXELS = 16;
-const int COIN_H_PIXELS = 16;
-
-const int DEAL_BUTTON_SCALING = 2;
-const int DEAL_BUTTON_W_PIXELS = 320 * DEAL_BUTTON_SCALING;
-const int DEAL_BUTTON_H_PIXELS = 64 * DEAL_BUTTON_SCALING;
-const int DEAL_BUTTON_GAP = 6;
-
-const int MAX_HAND_SIZE = 5;
-
-const int offset_x = (WINDOW_W_PIXELS / 2) - ((MAX_HAND_SIZE * CARD_W_PIXELS) / 2) - (CARD_GAP_PIXELS * (MAX_HAND_SIZE - 1) / 2);
-const int offset_y = WINDOW_H_PIXELS / 2 - CARD_H_PIXELS / 2;
-
-const int deal_button_offset_x = WINDOW_W_PIXELS - DEAL_BUTTON_W_PIXELS - DEAL_BUTTON_GAP;
-const int deal_button_offset_y = WINDOW_H_PIXELS - DEAL_BUTTON_H_PIXELS - DEAL_BUTTON_GAP;
-
-const SDL_Rect ButtonRect = {deal_button_offset_x, deal_button_offset_y, DEAL_BUTTON_W_PIXELS, DEAL_BUTTON_H_PIXELS};
-const SDL_Rect StatusMessageRect = {8, WINDOW_H_PIXELS - 64, WINDOW_W_PIXELS / 4, 64};
-const SDL_Rect CoinMessageRect = {8 + COIN_W_PIXELS * COIN_SCALING, 8, WINDOW_W_PIXELS / 8, 64};
-
-
-// DEFINITIONS
-typedef enum
-{
-    GAME_STATE_INIT,
-    GAME_STATE_WAIT_FOR_BET,
-    GAME_STATE_BET,
-    GAME_STATE_WAIT_FOR_CARDS,
-    GAME_STATE_DEAL,
-    GAME_STATE_OVER,
-    GAME_STATE_FINISHED,
-    GAME_STATE_EXIT
- } GameState;
-
-struct GameObject
-{
-    // UI
-    SDL_Window *GraphicsWindow;
-    SDL_Renderer *GraphicsRenderer;
-    bool SelectedCards[MAX_HAND_SIZE];
-    std::set<int> WinningCards;
-
-    // Game Data
-    Deck SourceDeck;
-    Deck PlayerDiscard;
-    PokerHand PlayerHand;
-
-    // Game State
-    GameState State;
-    int lastClickX, lastClickY;
-    bool ButtonPressed = false;
-    int TotalCoins = 100;
-    int LastBet = 10;
-    int LastWinnings = 0;
-
-    std::string StatusText;
-    std::string ButtonText;
-
-};
-
 // FUNCTION PROTOTYPES
 void PixelPoker_Init(GameObject *GameObject);
 void PixelPoker_Update(GameObject *GameObject);
 void PixelPoker_Render(GameObject *GameObject);
 void PixelPoker_Close(GameObject *GameObject);
 
-void CreateDeck(Deck& deck);
-void DrawCard(Deck& source, Deck& target, int count = 1);
-
 void RenderHand(SDL_Renderer *Renderer, Deck& hand);
 void RenderCoins(SDL_Renderer *Renderer, int count);
-
-void HandleInput(GameObject *GameObject);
-
-int CheckWinnings(GameObject *GameObject);
 
 void RenderText(SDL_Renderer *Renderer, std::string Text, const SDL_Rect *Rect);
 
@@ -141,26 +57,14 @@ TTF_Font *Font;
 
 void PixelPoker_Init(GameObject *GameObject)
 {
-    srand((unsigned int)time(0));
+    
 
-    SDL_Init(SDL_INIT_VIDEO);
-    IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
-    TTF_Init();
+    
 
-    // Create a window
-    GameObject->GraphicsWindow = SDL_CreateWindow("PIXEL POKER", 0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS, SDL_WINDOW_SHOWN);
-
-    // Create a renderer
-    GameObject->GraphicsRenderer = SDL_CreateRenderer(GameObject->GraphicsWindow, -1, SDL_RENDERER_ACCELERATED);
-    SDL_SetRenderDrawColor(GameObject->GraphicsRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-    SDL_SetRenderDrawBlendMode(GameObject->GraphicsRenderer, SDL_BLENDMODE_BLEND);
+    
 
     // Load font
-    std::string fontPath = FONT_PATH + FONT_NAME;
-    Font = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
-
-    TTF_SetFontStyle(Font, TTF_STYLE_BOLD);
+    
 
     // Load background texture
     std::string bgImagePath = MEDIA_PATH + "bg.png";
@@ -436,75 +340,6 @@ void PixelPoker_Render(GameObject *GameObject)
     SDL_Delay(1000 / 60);
 }
 
-void PixelPoker_Close(GameObject *GameObject)
-{
-    // TODO: destroy everything
-
-    SDL_DestroyWindow(GameObject->GraphicsWindow);
-    SDL_Quit();
-}
-
-void CreateDeck(Deck& deck)
-{
-    if (deck.IsEmpty())
-    {
-        deck.AddCard({HEART, ACE});
-        deck.AddCard({HEART, ACE});
-        deck.AddCard({HEART, TWO});
-        deck.AddCard({HEART, THREE});
-        deck.AddCard({HEART, FOUR});
-        deck.AddCard({HEART, FIVE});
-        deck.AddCard({HEART, SIX});
-        deck.AddCard({HEART, SEVEN});
-        deck.AddCard({HEART, EIGHT});
-        deck.AddCard({HEART, NINE});
-        deck.AddCard({HEART, TEN});
-        deck.AddCard({HEART, JACK});
-        deck.AddCard({HEART, QUEEN});
-        deck.AddCard({HEART, KING});
-        deck.AddCard({DIAMOND, ACE});
-        deck.AddCard({DIAMOND, TWO});
-        deck.AddCard({DIAMOND, THREE});
-        deck.AddCard({DIAMOND, FOUR});
-        deck.AddCard({DIAMOND, FIVE});
-        deck.AddCard({DIAMOND, SIX});
-        deck.AddCard({DIAMOND, SEVEN});
-        deck.AddCard({DIAMOND, EIGHT});
-        deck.AddCard({DIAMOND, NINE});
-        deck.AddCard({DIAMOND, TEN});
-        deck.AddCard({DIAMOND, JACK});
-        deck.AddCard({DIAMOND, QUEEN});
-        deck.AddCard({DIAMOND, KING});
-        deck.AddCard({CLUB, ACE});
-        deck.AddCard({CLUB, TWO});
-        deck.AddCard({CLUB, THREE});
-        deck.AddCard({CLUB, FOUR});
-        deck.AddCard({CLUB, FIVE});
-        deck.AddCard({CLUB, SIX});
-        deck.AddCard({CLUB, SEVEN});
-        deck.AddCard({CLUB, EIGHT});
-        deck.AddCard({CLUB, NINE});
-        deck.AddCard({CLUB, TEN});
-        deck.AddCard({CLUB, JACK});
-        deck.AddCard({CLUB, QUEEN});
-        deck.AddCard({CLUB, KING});
-        deck.AddCard({SPADE, ACE});
-        deck.AddCard({SPADE, TWO});
-        deck.AddCard({SPADE, THREE});
-        deck.AddCard({SPADE, FOUR});
-        deck.AddCard({SPADE, FIVE});
-        deck.AddCard({SPADE, SIX});
-        deck.AddCard({SPADE, SEVEN});
-        deck.AddCard({SPADE, EIGHT});
-        deck.AddCard({SPADE, NINE});
-        deck.AddCard({SPADE, TEN});
-        deck.AddCard({SPADE, JACK});
-        deck.AddCard({SPADE, QUEEN});
-        deck.AddCard({SPADE, KING});
-
-        deck.Shuffle();
-    }
-}
 
 void RenderHand(SDL_Renderer *Renderer, Deck& hand)
 {
@@ -526,162 +361,5 @@ void RenderHand(SDL_Renderer *Renderer, Deck& hand)
     }
 }
 
-void RenderCoins(SDL_Renderer *Renderer, int count)
-{
-    // Render coin total
-    SDL_Rect coinSrcRect = {0, 0, COIN_W_PIXELS, COIN_H_PIXELS};
-    SDL_Rect coinDestRect = {10, 10, COIN_W_PIXELS * COIN_SCALING, COIN_H_PIXELS * COIN_SCALING};
-    SDL_RenderCopy(Renderer, CoinTexture, &coinSrcRect, &coinDestRect);
-}
 
-void HandleInput(GameObject *GameObject)
-{
-    SDL_Event event;
 
-    while (SDL_PollEvent(&event) != 0)
-    {
-        if (event.type == SDL_QUIT)
-        {
-            GameObject->State = GAME_STATE_EXIT;
-        }
-        else if (event.type == SDL_MOUSEBUTTONDOWN)
-        {
-            SDL_GetMouseState(&GameObject->lastClickX, &GameObject->lastClickY);
-        }
-    }
-
-    if (GameObject->lastClickX > 0 && GameObject->lastClickY > 0)
-    {
-        // Determine if any cards were clicked on
-        for (int i = 0; i < MAX_HAND_SIZE; i++)
-        {
-            SDL_Rect r = {offset_x + (i * CARD_W_PIXELS) + (i * CARD_GAP_PIXELS), offset_y, CARD_W_PIXELS, CARD_H_PIXELS};
-
-            if (GameObject->lastClickX > r.x && GameObject->lastClickX < r.x + r.w && GameObject->lastClickY > r.y && GameObject->lastClickY < r.y + r.h)
-            {
-                GameObject->SelectedCards[i] = !GameObject->SelectedCards[i];
-            }
-        }
-
-        // Check if deal button was pressed
-        if (GameObject->lastClickX > ButtonRect.x && GameObject->lastClickX < ButtonRect.x + ButtonRect.w && GameObject->lastClickY > ButtonRect.y && GameObject->lastClickY < ButtonRect.y + ButtonRect.h)
-        {
-            GameObject->ButtonPressed = true;
-        }
-
-        GameObject->lastClickX = 0;
-        GameObject->lastClickY = 0;
-    }
-}
-
-int CheckWinnings(GameObject *GameObject)
-{
-    const int LOSE = 0;
-    const int JACKS_OR_BETTER = 1;
-    const int TWO_PAIR = 2;
-    const int THREE_OF_A_KIND = 3;
-    const int STRAIGHT = 4;
-    const int FLUSH = 6;
-    const int FULL_HOUSE = 9;
-    const int FOUR_OF_A_KIND = 25;
-    const int STRAIGHT_FLUSH = 50;
-    const int ROYAL_FLUSH = 250;
-
-    // Royal Flush
-    GameObject->WinningCards = GameObject->PlayerHand.IsRoyalFlush();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "ROYAL FLUSH";
-        return ROYAL_FLUSH;
-    }
-
-    // Straight Flush
-    GameObject->WinningCards = GameObject->PlayerHand.IsStraightFlush();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "STRAIGHT FLUSH";
-        return FOUR_OF_A_KIND;
-    }
-
-    // Four of a Kind
-    GameObject->WinningCards = GameObject->PlayerHand.IsFourOfAKind();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "FOUR OF A KIND";
-        return FOUR_OF_A_KIND;
-    }
-    
-    // Full House
-    GameObject->WinningCards = GameObject->PlayerHand.IsFullHouse();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "FULL HOUSE";
-        return FULL_HOUSE;
-    }
-    
-    // Flush
-    GameObject->WinningCards = GameObject->PlayerHand.IsFlush();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "FLUSH";
-        return FLUSH;
-    }
-
-    // Straight
-    GameObject->WinningCards = GameObject->PlayerHand.IsStraight();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "STRAIGHT";
-        return STRAIGHT;
-    }
-
-    // Three of a Kind
-    GameObject->WinningCards = GameObject->PlayerHand.IsThreeOfAKind();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "THREE OF A KIND";
-        return THREE_OF_A_KIND;
-    }
-
-    // Two Pair
-    GameObject->WinningCards = GameObject->PlayerHand.IsTwoPair();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "TWO PAIR";
-        return TWO_PAIR;
-    }
-
-    // Jacks or Better
-    GameObject->WinningCards = GameObject->PlayerHand.IsJacksOrBetter();
-
-    if (GameObject->WinningCards.size() > 0)
-    {
-        GameObject->StatusText = "JACKS OR BETTER";
-        return LOSE;
-    }
-
-    GameObject->StatusText = "GAME OVER";
-    return LOSE;
-}
-
-void RenderText(SDL_Renderer *Renderer, std::string Text, const SDL_Rect *Rect)
-{
-    SDL_Surface *s;
-    SDL_Texture *t;
-
-    SDL_Color c = {0xFF, 0x00, 0x00};
-
-    s = TTF_RenderText_Solid(Font, Text.c_str(), c);
-    t = SDL_CreateTextureFromSurface(Renderer, s);
-    SDL_RenderCopy(Renderer, t, NULL, Rect);
-    SDL_FreeSurface(s);
-    SDL_DestroyTexture(t);
-}
