@@ -29,7 +29,7 @@ struct GameStateObject
     Deck PlayerDiscard;
     PokerHand PlayerHand;
 
-    int TotalCoins;
+    int TotalCoins = 100;
     int LastBet;
     int LastWinnings;
 };

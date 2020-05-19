@@ -38,6 +38,26 @@ public:
     void Destroy();
 };
 
+// InterfaceText
+
+class InterfaceText : public InterfaceElement
+{
+private:
+    std::string text;
+    TTF_Font *font;
+    GameCommand *updateCommand;
+
+public:
+    InterfaceText(bool act = true, bool vis = true);
+    void Update(GameState &game);
+    void Render(GameState &game, Renderer &renderer);
+    void SetUpdateCommand(GameCommand *com);
+    std::string *GetText();
+    void SetText(std::string t);
+    void SetFont(TTF_Font *f);
+    void Destroy();
+};
+
 class InterfaceButton : public InterfaceElement
 {
 private:

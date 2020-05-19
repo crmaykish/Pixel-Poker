@@ -27,6 +27,51 @@ void InterfaceStaticImage::SetTexture(SDL_Texture *tex)
     texture = tex;
 }
 
+// InterfaceText
+
+InterfaceText::InterfaceText(bool act, bool vis)
+{
+    active = act;
+    visible = vis;
+}
+
+void InterfaceText::Update(GameState &game)
+{
+    if (updateCommand != NULL)
+    {
+        updateCommand->Execute(game);
+    }
+}
+
+void InterfaceText::Render(GameState &game, Renderer &renderer)
+{
+    renderer.RenderText(text, font, {0xFF, 0xFF, 0xFF, 0xFF}, &rect);
+}
+
+void InterfaceText::SetUpdateCommand(GameCommand *com)
+{
+    updateCommand = com;
+}
+
+std::string *InterfaceText::GetText()
+{
+    return &text;
+}
+
+void InterfaceText::SetText(std::string t)
+{
+    text = t;
+}
+
+void InterfaceText::SetFont(TTF_Font *f)
+{
+    font = f;
+}
+
+void InterfaceText::Destroy()
+{
+}
+
 // InterfaceButton
 
 InterfaceButton::InterfaceButton(bool act, bool vis)

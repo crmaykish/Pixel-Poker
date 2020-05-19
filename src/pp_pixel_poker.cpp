@@ -21,6 +21,8 @@ void PixelPoker::Init()
     // TODO: just have commands set flags instead of doing the work themselves
     // then let the main game update code do the work
 
+    // TODO: create commands for updating UI elements as well? or just let that happen in Update()
+
     int buttonW = 400;
     int buttonH = 120;
     int buttonOffset = 20;
@@ -31,6 +33,13 @@ void PixelPoker::Init()
     background->SetTexture(assetManager.GetTexture(TEXTURE_BG_0));
     
     s.AddInterfaceElement(background);
+
+    InterfaceText *coinsText = new InterfaceText();
+    coinsText->SetRect(buttonOffset, buttonOffset, buttonW, buttonH);
+    coinsText->SetFont(assetManager.GetFont(FONT_UI_0));
+
+    coinsText->SetUpdateCommand(new UpdateCoinTextCommand(coinsText->GetText()));
+    s.AddInterfaceElement(coinsText);
 
     // Bet Button
     InterfaceButton *buttonBet = new InterfaceButton();
