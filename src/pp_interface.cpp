@@ -25,7 +25,11 @@ void InterfaceButton::Update(GameState &game)
 
         if (pressed)
         {
-            int i = 0;
+            // TODO: this is going to run constantly while the button is pressed
+            if (command != NULL)
+            {
+                command->Execute(game);
+            }
         }
     }
 }
@@ -58,4 +62,9 @@ void InterfaceButton::SetTextureUnpressed(SDL_Texture *tex)
 SDL_Texture *InterfaceButton::GetTexture()
 {
     return (pressed ? texPressed : texUnpressed);
+}
+
+void InterfaceButton::SetCommand(GameCommand *com)
+{
+    command = com;
 }

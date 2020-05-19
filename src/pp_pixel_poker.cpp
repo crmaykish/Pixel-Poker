@@ -15,12 +15,15 @@ void PixelPoker::Init()
     scenes.push_back(Scene());
     Scene &s = scenes.at(0);
 
+    GameCommand *hello = new HelloCommand();
+
     for (int i = 0; i < 4; i++)
     {
         InterfaceButton *bigButton = new InterfaceButton();
         bigButton->SetRect(10 + (i * 300), 10, 300, 100);
         bigButton->SetTexturePressed(assetManager.GetTexture(TEXTURE_BG_0));
         bigButton->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
+        bigButton->SetCommand(hello);
 
         s.AddInterfaceElement(bigButton);
     }

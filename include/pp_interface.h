@@ -7,6 +7,7 @@
 
 #include "pp_game_state.h"
 #include "pp_renderer.h"
+#include "pp_command.h"
 
 // TODO: might be possible to remove the dependency on SDL and push it all to the renderer
 // Just hold on to a texture key and use a generic position struct
@@ -31,6 +32,7 @@ private:
     bool pressed;
     SDL_Texture *texPressed;
     SDL_Texture *texUnpressed;
+    GameCommand *command;
 
 protected:
     SDL_Texture *GetTexture();
@@ -41,6 +43,7 @@ public:
     void Render(GameState &game, Renderer &renderer);
     void SetTexturePressed(SDL_Texture *tex);
     void SetTextureUnpressed(SDL_Texture *tex);
+    void SetCommand(GameCommand *com);
     void Destroy();
 };
 
