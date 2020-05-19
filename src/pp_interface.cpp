@@ -46,12 +46,13 @@ void InterfaceButton::Update(GameState &game)
     {
         previouslyPressed = currentlyPressed;
 
-        bool mouseClicked = game.State.MouseClicked;
-        bool mouseOnButton = PointInRect(&game.State.MousePosition, &rect);
+        bool mouseClicked = game.State.Mouse.Clicked;
+        bool clickedButton = PointInRect(&game.State.Mouse.DownPos, &rect);
+        bool releasedButton = PointInRect(&game.State.Mouse.UpPos, &rect);
 
-        currentlyPressed = mouseClicked && mouseOnButton;
+        currentlyPressed = mouseClicked && clickedButton;
 
-        if (previouslyPressed && !currentlyPressed && mouseOnButton)
+        if (previouslyPressed && !currentlyPressed && releasedButton)
         {
             if (command != NULL)
             {

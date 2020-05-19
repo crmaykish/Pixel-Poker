@@ -10,11 +10,18 @@
  */
 const int PLAYER_HAND_SIZE = 5;
 
+struct MouseState
+{
+    Point DownPos;
+    Point UpPos;
+    Point CurrentPos;
+    bool Clicked;
+};
+
 struct GameStateObject
 {
-    Point MousePosition;
-    bool MouseClicked;
-    
+    MouseState Mouse;
+
     bool SelectedCards[PLAYER_HAND_SIZE];
     std::set<int> WinningCards;
     
