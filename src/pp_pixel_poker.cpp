@@ -7,6 +7,7 @@
 #include "commands/pp_command_update_coin_display.h"
 #include "commands/pp_command_update_bet_button.h"
 #include "commands/pp_command_update_deal_button.h"
+#include "commands/pp_command_update_card.h"
 
 void PixelPoker::Init()
 {
@@ -76,6 +77,7 @@ void PixelPoker::Init()
         card->SetIndexInHand(i);
         card->Enable();
         card->SetClickedCommand(new CardClickedCommand(&game, card));
+        card->SetUpdateCommand(new UpdatePlayingCardCommand(&game, card));
         s.AddInterfaceElement(card);
     }
 }

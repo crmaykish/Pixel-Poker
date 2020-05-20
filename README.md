@@ -27,4 +27,3 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
 - a ton of memory leaks
 
 ## Todo List
-- clicking play again should hide the old cards

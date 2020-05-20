@@ -187,30 +187,41 @@ void InterfacePlayingCard::Update(GameState &game)
     // what kind of card is this?
     if (!game.PlayerHand.IsEmpty())
     {
+        Enable();
+
         Card = game.PlayerHand.CardAt(IndexInHand);
 
         Highlighted = game.CardFlags[IndexInHand].Selected;
 
         Winning = game.CardFlags[IndexInHand].Winning;
     }
+    else
+    {
+        Highlighted = false;
+        Winning = false;
+        Disable();
+    }
 }
 
 void InterfacePlayingCard::Render(Renderer &renderer)
 {
-    if (PreRenderCommand != NULL)
+    if (Enabled)
     {
-        PreRenderCommand->Execute();
-    }
+        if (PreRenderCommand != NULL)
+        {
+            PreRenderCommand->Execute();
+        }
 
-    renderer.RenderTexture(Assets->GetTexture(Assets->CardFileName(&Card)), &Rectangle);
+        renderer.RenderTexture(Assets->GetTexture(Assets->CardFileName(&Card)), &Rectangle);
 
-    if (Highlighted)
-    {
-        renderer.RenderRectangle({0x00, 0x00, 0xFF, 0x50}, &Rectangle);
-    }
+        if (Highlighted)
+        {
+            renderer.RenderRectangle({0x00, 0x00, 0xFF, 0x50}, &Rectangle);
+        }
 
-    if (Winning)
-    {
-        renderer.RenderRectangle({0x00, 0xFF, 0x00, 0x50}, &Rectangle);
+        if (Winning)
+        {
+            renderer.RenderRectangle({0x00, 0xFF, 0x00, 0x50}, &Rectangle);
+        }
     }
 }
