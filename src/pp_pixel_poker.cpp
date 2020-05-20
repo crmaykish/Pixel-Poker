@@ -27,9 +27,9 @@ void PixelPoker::Init()
     int buttonH = 120;
     int buttonOffset = 20;
 
-    int cardW = 120;
-    int cardH = 200;
-    int cardGap = 10;
+    int cardGap = WINDOW_W_PIXELS / 120;
+    int cardW = (WINDOW_W_PIXELS / 5) - cardGap - (cardGap / 5);
+    int cardH = cardW * 1.42;
 
     // Background Image
     InterfaceStaticImage *background = new InterfaceStaticImage();
@@ -69,7 +69,7 @@ void PixelPoker::Init()
     for (int i = 0; i < 5; i++)
     {
         InterfacePlayingCard *card = new InterfacePlayingCard();
-        card->SetRect(i * (cardGap + cardW), 200, cardW, cardH);
+        card->SetRect(cardGap + i * (cardGap + cardW), 200, cardW, cardH);
         
         card->SetTexturePressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
         card->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
