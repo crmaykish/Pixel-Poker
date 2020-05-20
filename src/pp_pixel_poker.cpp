@@ -32,57 +32,53 @@ void PixelPoker::Init()
     int cardH = cardW * 1.42;
 
     // Background Image
-    InterfaceStaticImage *background = new InterfaceStaticImage();
-    background->SetRect(0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS);
-    background->SetTexture(assetManager.GetTexture(TEXTURE_BG_0));
-    
+    InterfaceStaticImage *background = new InterfaceStaticImage(&assetManager);
+    background->SetRectangle(0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS);
+    background->SetTextureKey(TEXTURE_BG_0);
+
     s.AddInterfaceElement(background);
 
-    InterfaceText *coinsText = new InterfaceText();
-    coinsText->SetRect(buttonOffset, buttonOffset, buttonW, buttonH);
-    coinsText->SetFont(assetManager.GetFont(FONT_UI_0));
+    InterfaceText *coinsText = new InterfaceText(&assetManager);
+    coinsText->SetRectangle(buttonOffset, buttonOffset, buttonW, buttonH);
+    coinsText->SetFontKey(FONT_UI_0);
 
-    coinsText->SetUpdateCommand(new UpdateCoinTextCommand(coinsText->GetText()));
+    // coinsText->SetUpdateCommand(new UpdateCoinTextCommand(coinsText->GetText()));
     s.AddInterfaceElement(coinsText);
 
     // Bet Button
-    InterfaceButton *buttonBet = new InterfaceButton();
-    buttonBet->SetRect(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
-    buttonBet->SetTexturePressed(assetManager.GetTexture(TEXTURE_BG_0));
-    buttonBet->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
-    buttonBet->SetFont(assetManager.GetFont(FONT_UI_0));
-    buttonBet->SetText("BET");
-    buttonBet->SetCommand(new BetCommand());
+    InterfaceButton *buttonBet = new InterfaceButton(&assetManager);
+    buttonBet->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
+    buttonBet->SetDownTextureKey(TEXTURE_BG_0);
+    buttonBet->SetUpTextureKey(BUTTON_UNPRESSED_0);
+    buttonBet->SetFontKey(FONT_UI_0);
+    // buttonBet->SetText("BET 10");
+    buttonBet->SetClickedCommand(new BetCommand(&game));
     s.AddInterfaceElement(buttonBet);
 
     // Deal Button
-    InterfaceButton *buttonDeal = new InterfaceButton();
-    buttonDeal->SetRect(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
-    buttonDeal->SetTexturePressed(assetManager.GetTexture(TEXTURE_BG_0));
-    buttonDeal->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
-    buttonDeal->SetFont(assetManager.GetFont(FONT_UI_0));
-    buttonDeal->SetText("DEAL");
-    buttonDeal->SetCommand(new DealCommand());
+    InterfaceButton *buttonDeal = new InterfaceButton(&assetManager);
+    buttonDeal->SetRectangle(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
+    buttonDeal->SetDownTextureKey(TEXTURE_BG_0);
+    buttonDeal->SetUpTextureKey(BUTTON_UNPRESSED_0);
+    buttonDeal->SetFontKey(FONT_UI_0);
+    // buttonDeal->SetText("DEAL");
+    buttonDeal->SetClickedCommand(new DealCommand(&game));
     s.AddInterfaceElement(buttonDeal);
 
     // Poker Hand
     for (int i = 0; i < 5; i++)
     {
-        InterfacePlayingCard *card = new InterfacePlayingCard();
-        card->SetRect(cardGap + i * (cardGap + cardW), 200, cardW, cardH);
-        
-        card->SetTexturePressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
-        card->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
-        card->SetFont(assetManager.GetFont(FONT_UI_0));
-        card->SetText("CARD");
+        InterfacePlayingCard *card = new InterfacePlayingCard(&assetManager);
+        card->SetRectangle(cardGap + i * (cardGap + cardW), 200, cardW, cardH);
 
-        // I don't love passing this in here
-        card->SetAssetManager(&assetManager);
-        card->SetIndex(i);
-        card->SetCommand(new CardClickedCommand(i));
+        card->SetIndexInHand(i);
+
+        CardClickedCommand *com = new CardClickedCommand(&game);
+        com->SetCardIndex(i);
+
+        card->SetClickedCommand(com);
         s.AddInterfaceElement(card);
     }
-
 }
 
 void PixelPoker::Run()

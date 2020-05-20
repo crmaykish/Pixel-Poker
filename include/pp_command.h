@@ -17,10 +17,38 @@
 // just use them to set flags or text state and let the main update loop
 // do the real game logic
 
-class GameCommand
+// RenderCommand
+
+class Command
 {
 public:
-    virtual void Execute(GameState &gameState) = 0;
+    virtual void Execute() = 0;
+};
+
+class RenderCommand : public Command
+{
+protected:
+    Renderer *Render;
+
+public:
+    RenderCommand(Renderer *render)
+    {
+        Render = render;
+    }
+};
+
+// GameCommand
+
+class GameCommand : public Command
+{
+protected:
+    GameState *Game;
+
+public:
+    GameCommand(GameState *game)
+    {
+        Game = game;
+    }
 };
 
 /**
@@ -29,10 +57,12 @@ public:
 class BetCommand : public GameCommand
 {
 public:
-    void Execute(GameState &gameState)
+    BetCommand(GameState *game) : GameCommand(game) {}
+
+    void Execute()
     {
         std::cout << "BET" << std::endl;
-        gameState.BetButtonPressed = true;
+        Game->BetButtonPressed = true;
     }
 };
 
@@ -42,45 +72,54 @@ public:
 class DealCommand : public GameCommand
 {
 public:
-    void Execute(GameState &gameState)
+    DealCommand(GameState *game) : GameCommand(game) {}
+
+    void Execute()
     {
         std::cout << "DEAL" << std::endl;
-        gameState.DealButtonPressed = true;
+        Game->DealButtonPressed = true;
     }
 };
 
 class UpdateCoinTextCommand : public GameCommand
 {
 private:
-    std::string *textPointer;
+    std::string *Text;
 
 public:
-    UpdateCoinTextCommand(std::string *TextTarget)
+    UpdateCoinTextCommand(GameState *game) : GameCommand(game) {}
+
+    void Execute()
     {
-        textPointer = TextTarget;
+        if (Text != NULL)
+        {
+            *Text = "COINS: " + std::to_string(Game->PlayerCoins);
+        }
     }
 
-    void Execute(GameState &gameState)
+    void SetText(std::string *text)
     {
-        *textPointer = "COINS: " + std::to_string(gameState.PlayerCoins);
+        Text = text;
     }
 };
 
 class CardClickedCommand : public GameCommand
 {
 private:
-    int index;
+    int CardIndex;
 
 public:
-    CardClickedCommand(int i)
+    CardClickedCommand(GameState *game) : GameCommand(game) {}
+
+    void Execute()
     {
-        index = i;
+        Game->CardFlags[CardIndex].Clicked = true;
+        std::cout << "CARD CLICKED: " << CardIndex << std::endl;
     }
 
-    void Execute(GameState &gameState)
+    void SetCardIndex(int cardIndex)
     {
-        gameState.CardFlags[index].Clicked = true;
-        std::cout << "CARD CLICKED: " << index << std::endl;
+        CardIndex = cardIndex;
     }
 };
 

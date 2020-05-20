@@ -122,6 +122,13 @@ void GameState::StateHandlerDeal()
 void GameState::StateHandlerGameOver()
 {
     // Wait for player to start another round
+    if (DealButtonPressed)
+    {
+        ClearCardFlags();
+
+        DealButtonPressed = false;
+        PokerState = POKER_INIT;
+    }
 }
 
 int GameState::CheckWinnings()

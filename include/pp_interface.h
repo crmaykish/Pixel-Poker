@@ -17,15 +17,29 @@
 class InterfaceElement
 {
 protected:
-    SDL_Rect rect;
-    bool active;
-    bool visible;
+    // State
+    SDL_Rect Rectangle;
+    bool Active;
+    bool Visible;
+
+    // Behavior
+    Command *UpdateCommand; // TODO: might need pre and post update commands
+    Command *PreRenderCommand;
+
+    // Assets
+    AssetManager *Assets; // TODO: this never gets set anywhere
 
 public:
+    // Virtual Methods
     virtual void Update(GameState &game) = 0;
     virtual void Render(Renderer &renderer) = 0;
     virtual void Destroy() = 0;
-    void SetRect(int x, int y, int w, int h);
+
+    // Base Methods
+    InterfaceElement(AssetManager *assetManager);
+    void SetRectangle(int x, int y, int w, int h);
+    void SetUpdateCommand(GameCommand *updateCommand);
+    void SetPreRenderCommand(GameCommand *preRenderCommand);
 };
 
 // InterfaceStaticImage
@@ -33,61 +47,56 @@ public:
 class InterfaceStaticImage : public InterfaceElement
 {
 private:
-    SDL_Texture *texture;
+    std::string TextureKey;
 
 public:
+    InterfaceStaticImage(AssetManager *assetManager) : InterfaceElement(assetManager) {}
     void Update(GameState &game);
     void Render(Renderer &renderer);
-    void SetTexture(SDL_Texture *tex);
     void Destroy();
+
+    void SetTextureKey(std::string textureKey);
 };
 
 // InterfaceText
 
 class InterfaceText : public InterfaceElement
 {
-private:
-    std::string text;
-    TTF_Font *font;
-    GameCommand *updateCommand;
+protected:
+    std::string Text;
+    std::string FontKey;
 
 public:
-    InterfaceText(bool act = true, bool vis = true);
+    InterfaceText(AssetManager *assetManager) : InterfaceElement(assetManager) {}
     void Update(GameState &game);
     void Render(Renderer &renderer);
-    void SetUpdateCommand(GameCommand *com);
-    std::string *GetText();
-    void SetText(std::string t);
-    void SetFont(TTF_Font *f);
     void Destroy();
+
+    void SetFontKey(std::string fontKey);
 };
 
 // InterfaceButton
 
-class InterfaceButton : public InterfaceElement
+class InterfaceButton : public InterfaceText
 {
 protected:
-    bool previouslyPressed;
-    bool currentlyPressed;
-    SDL_Texture *texPressed;
-    SDL_Texture *texUnpressed;
-    std::string text;
-    TTF_Font *font;
+    bool ClickedPreviously;
+    bool ClickedCurrently;
 
-    GameCommand *command;
+    std::string UpTextureKey;
+    std::string DownTextureKey;
 
-    SDL_Texture *GetTexture();
+    GameCommand *ClickedCommand;
 
 public:
-    InterfaceButton(bool act = true, bool vis = true);
+    InterfaceButton(AssetManager *assetManager) : InterfaceText(assetManager) {}
     void Update(GameState &game);
     void Render(Renderer &renderer);
-    void SetTexturePressed(SDL_Texture *tex);
-    void SetTextureUnpressed(SDL_Texture *tex);
-    void SetText(std::string t);
-    void SetCommand(GameCommand *com);
-    void SetFont(TTF_Font *f);
     void Destroy();
+
+    void SetClickedCommand(GameCommand *clickedCommand);
+    void SetUpTextureKey(std::string upTextureKey);
+    void SetDownTextureKey(std::string downTextureKey);
 };
 
 // InterfacePlayingCard
@@ -97,26 +106,20 @@ public:
 class InterfacePlayingCard : public InterfaceButton
 {
 protected:
-    int index;
-    bool highlight;
-    bool winning;
+    // Externally controlled state
+    int IndexInHand;
 
-    // TODO: find a way to avoid storing the card object
-    PlayingCard card;
-
-    AssetManager *assetManager;
+    // Internal state
+    bool Highlighted;
+    bool Winning;
+    PlayingCard Card; // TODO: find a way to avoid storing the card object?
 
 public:
-    void SetIndex(int i);
+    InterfacePlayingCard(AssetManager *assetManager) : InterfaceButton(assetManager) {}
     void Update(GameState &game);
     void Render(Renderer &renderer);
-    SDL_Texture *GetTexture();
 
-    // TODO: ugly
-    void SetAssetManager(AssetManager *a)
-    {
-        assetManager = a;
-    }
+    void SetIndexInHand(int index);
 };
 
 #endif

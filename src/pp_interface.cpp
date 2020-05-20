@@ -2,166 +2,145 @@
 
 // InterfaceElement
 
-void InterfaceElement::SetRect(int x, int y, int w, int h)
+InterfaceElement::InterfaceElement(AssetManager *assetManager)
 {
-    rect = {x, y, w, h};
+    Assets = assetManager;
+}
+
+void InterfaceElement::SetRectangle(int x, int y, int w, int h)
+{
+    Rectangle = {x, y, w, h};
+}
+
+void InterfaceElement::SetUpdateCommand(GameCommand *updateCommand)
+{
+    UpdateCommand = updateCommand;
+}
+
+void InterfaceElement::SetPreRenderCommand(GameCommand *preRenderCommand)
+{
+    PreRenderCommand = preRenderCommand;
 }
 
 // InterfaceStaticImage
 
 void InterfaceStaticImage::Update(GameState &game)
 {
+    if (UpdateCommand != NULL)
+    {
+        UpdateCommand->Execute();
+    }
 }
 
 void InterfaceStaticImage::Render(Renderer &renderer)
 {
-    renderer.RenderTexture(texture, &rect);
+    if (PreRenderCommand != NULL)
+    {
+        PreRenderCommand->Execute();
+    }
+
+    renderer.RenderTexture(Assets->GetTexture(TextureKey), &Rectangle);
 }
 
-void InterfaceStaticImage::Destroy()
-{
-}
+void InterfaceStaticImage::Destroy() {}
 
-void InterfaceStaticImage::SetTexture(SDL_Texture *tex)
+void InterfaceStaticImage::SetTextureKey(std::string textureKey)
 {
-    texture = tex;
+    TextureKey = textureKey;
 }
 
 // InterfaceText
 
-InterfaceText::InterfaceText(bool act, bool vis)
-{
-    active = act;
-    visible = vis;
-}
-
 void InterfaceText::Update(GameState &game)
 {
-    if (updateCommand != NULL)
+    if (UpdateCommand != NULL)
     {
-        updateCommand->Execute(game);
+        UpdateCommand->Execute();
     }
 }
 
 void InterfaceText::Render(Renderer &renderer)
 {
-    renderer.RenderText(text, font, {0xFF, 0xFF, 0xFF, 0xFF}, &rect);
+    if (PreRenderCommand != NULL)
+    {
+        PreRenderCommand->Execute();
+    }
+
+    renderer.RenderText(Text,
+                        Assets->GetFont(FontKey),
+                        {0xFF, 0xFF, 0xFF, 0xFF},
+                        &Rectangle);
 }
 
-void InterfaceText::SetUpdateCommand(GameCommand *com)
-{
-    updateCommand = com;
-}
+void InterfaceText::Destroy() {}
 
-std::string *InterfaceText::GetText()
+void InterfaceText::SetFontKey(std::string fontKey)
 {
-    return &text;
-}
-
-void InterfaceText::SetText(std::string t)
-{
-    text = t;
-}
-
-void InterfaceText::SetFont(TTF_Font *f)
-{
-    font = f;
-}
-
-void InterfaceText::Destroy()
-{
+    FontKey = fontKey;
 }
 
 // InterfaceButton
 
-InterfaceButton::InterfaceButton(bool act, bool vis)
-{
-    active = act;
-    visible = vis;
-
-    currentlyPressed = false;
-    previouslyPressed = false;
-}
-
 void InterfaceButton::Update(GameState &game)
 {
-    // TODO: based on game state, update this button appropriately
+    bool mouseClicked = game.Mouse.Clicked;
 
-    if (active)
+    ClickedPreviously = ClickedCurrently;
+    ClickedCurrently = mouseClicked && PointInRect(&game.Mouse.DownPos, &Rectangle);
+
+    if (ClickedPreviously && !ClickedCurrently && PointInRect(&game.Mouse.UpPos, &Rectangle))
     {
-        previouslyPressed = currentlyPressed;
-
-        bool mouseClicked = game.Mouse.Clicked;
-        bool clickedButton = PointInRect(&game.Mouse.DownPos, &rect);
-        bool releasedButton = PointInRect(&game.Mouse.UpPos, &rect);
-
-        currentlyPressed = mouseClicked && clickedButton;
-
-        if (previouslyPressed && !currentlyPressed && releasedButton)
+        if (ClickedCommand != NULL)
         {
-            if (command != NULL)
-            {
-                command->Execute(game);
-            }
+            ClickedCommand->Execute();
         }
     }
-    else
+
+    if (UpdateCommand != NULL)
     {
-        // TODO: reset the button to a safe state
+        UpdateCommand->Execute();
     }
 }
 
 void InterfaceButton::Render(Renderer &renderer)
 {
-    // TODO: do we need the game state in here? Update() should prep everything before rendering
-
-    // Use the renderer to draw this button
-    if (visible)
+    if (PreRenderCommand != NULL)
     {
-        renderer.RenderTexture(GetTexture(), &rect);
-        renderer.RenderText(text, font, {0xFF, 0xFF, 0xFF, 0xFF}, &rect);
+        PreRenderCommand->Execute();
+    }
+
+    SDL_Texture *t = Assets->GetTexture(ClickedCurrently ? DownTextureKey : UpTextureKey);
+
+    renderer.RenderTexture(t, &Rectangle);
+
+    if (!Text.empty())
+    {
+        renderer.RenderText(Text, Assets->GetFont(FontKey), {0xFF, 0xFF, 0xFF, 0xFF}, &Rectangle);
     }
 }
 
-void InterfaceButton::Destroy()
+void InterfaceButton::Destroy() {}
+
+void InterfaceButton::SetClickedCommand(GameCommand *clickedCommand)
 {
+    ClickedCommand = clickedCommand;
 }
 
-void InterfaceButton::SetTexturePressed(SDL_Texture *tex)
+void InterfaceButton::SetUpTextureKey(std::string upTextureKey)
 {
-    texPressed = tex;
+    UpTextureKey = upTextureKey;
 }
 
-void InterfaceButton::SetTextureUnpressed(SDL_Texture *tex)
+void InterfaceButton::SetDownTextureKey(std::string downTextureKey)
 {
-    texUnpressed = tex;
-}
-
-SDL_Texture *InterfaceButton::GetTexture()
-{
-    return (currentlyPressed ? texPressed : texUnpressed);
-}
-
-void InterfaceButton::SetText(std::string t)
-{
-    text = t;
-}
-
-void InterfaceButton::SetFont(TTF_Font *f)
-{
-    font = f;
-}
-
-void InterfaceButton::SetCommand(GameCommand *com)
-{
-    command = com;
+    DownTextureKey = downTextureKey;
 }
 
 // InterfacePlayingCard
 
-void InterfacePlayingCard::SetIndex(int i)
+void InterfacePlayingCard::SetIndexInHand(int i)
 {
-    index = i;
+    IndexInHand = i;
 }
 
 void InterfacePlayingCard::Update(GameState &game)
@@ -174,38 +153,30 @@ void InterfacePlayingCard::Update(GameState &game)
     // what kind of card is this?
     if (!game.PlayerHand.IsEmpty())
     {
-        card = game.PlayerHand.CardAt(index);
+        Card = game.PlayerHand.CardAt(IndexInHand);
 
-        highlight = game.CardFlags[index].Selected;
+        Highlighted = game.CardFlags[IndexInHand].Selected;
 
-        winning = game.CardFlags[index].Winning;
-
-        visible = true;
+        Winning = game.CardFlags[IndexInHand].Winning;
     }
-    else
-    {
-        visible = false;
-
-        // TODO: card is invisible, reset it to a safe state
-    }
-    
 }
 
 void InterfacePlayingCard::Render(Renderer &renderer)
 {
-    if (visible)
+    if (PreRenderCommand != NULL)
     {
-        // TODO: this looks terrible
-        renderer.RenderTexture(assetManager->GetTexture(assetManager->CardFileName(&card)), &rect);
+        PreRenderCommand->Execute();
+    }
 
-        if (highlight)
-        {
-            renderer.RenderRectangle({0x00, 0x00, 0xFF, 0x50}, &rect);
-        }
-        
-        if (winning)
-        {
-            renderer.RenderRectangle({0x00, 0xFF, 0x00, 0x50}, &rect);
-        }
+    renderer.RenderTexture(Assets->GetTexture(Assets->CardFileName(&Card)), &Rectangle);
+
+    if (Highlighted)
+    {
+        renderer.RenderRectangle({0x00, 0x00, 0xFF, 0x50}, &Rectangle);
+    }
+
+    if (Winning)
+    {
+        renderer.RenderRectangle({0x00, 0xFF, 0x00, 0x50}, &Rectangle);
     }
 }
