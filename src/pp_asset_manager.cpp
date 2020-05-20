@@ -13,14 +13,30 @@ std::string AssetManager::GetText(std::string key)
 
 SDL_Texture *AssetManager::GetTexture(std::string key)
 {
-    // TODO: does no caching, always loads from a file
     SDL_Texture *t = NULL;
 
+    // Check for the texture in the cache
+
+    try
+    {
+        t = textureMap.at(key);
+    }
+    catch (...)
+    {
+    }
+
+    // If the texture was not found in the cache, load it from file and cache it
     if (t == NULL)
     {
-        // Attempt to load texture from file
+        Log("Loading texture: " + key, LOG_INFO);
         t = renderer->LoadTexture(IMAGES_PATH + key);
 
+        if (t == NULL)
+        {
+            Log("Failed to load texture: " + key, LOG_ERROR);
+        }
+
+        textureMap.insert({key, t});
     }
 
     return t;
@@ -31,9 +47,25 @@ TTF_Font *AssetManager::GetFont(std::string key)
     // TODO: does no caching, always loads from a file
     TTF_Font *f = NULL;
 
+    try
+    {
+        f = fontMap.at(key);
+    }
+    catch (...)
+    {
+    }
+
     if (f == NULL)
     {
+        Log("Loading font: " + key, LOG_INFO);
         f = renderer->LoadFont(FONTS_PATH + key);
+
+        if (f == NULL)
+        {
+            Log("Failed to load font: " + key, LOG_ERROR);
+        }
+
+        fontMap.insert({key, f});
     }
 
     return f;

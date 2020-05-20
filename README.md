@@ -23,7 +23,5 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
 - Cache textures instead of loading from file every time, see if it helps CPU usage
 
 ## Bugs
-- Sometimes drawing only four cards
-- a ton of memory leaks
 
 ## Todo List
