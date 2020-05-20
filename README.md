@@ -20,7 +20,6 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
 
 ## Architecture Ideas
 - Combine collections of commands instead of having to attach every one separately, e.g. all buttons will have an update handler and a clicked callback.
-- Cache textures instead of loading from file every time, see if it helps CPU usage
 
 ## Bugs
 
