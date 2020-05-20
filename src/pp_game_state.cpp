@@ -96,14 +96,25 @@ void GameState::StateHandlerSelectCards()
 
 void GameState::StateHandlerDeal()
 {
+    for (int i = 0; i < PLAYER_HAND_SIZE; i++)
+    {
+        if (!CardFlags[i].Selected)
+        {
+            // Replace any non-selected cards with cards from the draw pile
+            PlayerHand.MoveCardAt(PlayerDiscard, i);
+            SourceDeck.MoveTopCardTo(PlayerHand, i);
+        }
+    }
+
     ClearCardFlags();
 
-    // Discard non-held cards
-
-    // Replace any discards with draws from the deck
-
     // Check the final hand and award winnings
-    CheckWinnings();
+    PlayerCoins += (LastBet * CheckWinnings());
+
+    for (auto w : WinningCards)
+    {
+        CardFlags[w].Winning = true;
+    }
 
     PokerState = POKER_GAME_OVER;
 }
@@ -113,8 +124,10 @@ void GameState::StateHandlerGameOver()
     // Wait for player to start another round
 }
 
-void GameState::CheckWinnings()
+int GameState::CheckWinnings()
 {
+    // TODO: define these outside of this function and use them to represent a winning hand state along with
+    // the indexes of cards
     const int LOSE = 0;
     const int JACKS_OR_BETTER = 1;
     const int TWO_PAIR = 2;
@@ -127,10 +140,11 @@ void GameState::CheckWinnings()
     const int ROYAL_FLUSH = 250;
 
     // Royal Flush
-    std::set WinningCards = PlayerHand.IsRoyalFlush();
+    WinningCards = PlayerHand.IsRoyalFlush();
 
     if (WinningCards.size() > 0)
     {
+        return ROYAL_FLUSH;
     }
 
     // Straight Flush
@@ -138,6 +152,7 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return STRAIGHT_FLUSH;
     }
 
     // Four of a Kind
@@ -145,6 +160,7 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return FOUR_OF_A_KIND;
     }
 
     // Full House
@@ -152,6 +168,7 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return FULL_HOUSE;
     }
 
     // Flush
@@ -159,6 +176,7 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return FLUSH;
     }
 
     // Straight
@@ -166,6 +184,7 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return STRAIGHT;
     }
 
     // Three of a Kind
@@ -173,6 +192,7 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return THREE_OF_A_KIND;
     }
 
     // Two Pair
@@ -180,6 +200,7 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return TWO_PAIR;
     }
 
     // Jacks or Better
@@ -187,7 +208,10 @@ void GameState::CheckWinnings()
 
     if (WinningCards.size() > 0)
     {
+        return JACKS_OR_BETTER;
     }
+
+    return LOSE;
 }
 
 void GameState::ClearCardFlags()

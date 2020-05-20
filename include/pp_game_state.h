@@ -45,7 +45,7 @@ private:
     void StateHandlerDeal();
     void StateHandlerGameOver();
 
-    void CheckWinnings();
+    int CheckWinnings();
     void ClearCardFlags();
 public:
     // Game State
@@ -57,6 +57,9 @@ public:
     int PlayerCoins = 100;
     int LastBet;
     int LastWinnings;
+
+    // TODO: find a better way to represent winning card selection
+    std::set<int> WinningCards;
 
     // Flags
     // Could think of these as action pending flags to make them more generic

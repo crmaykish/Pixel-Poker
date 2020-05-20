@@ -178,6 +178,8 @@ void InterfacePlayingCard::Update(GameState &game)
 
         highlight = game.CardFlags[index].Selected;
 
+        winning = game.CardFlags[index].Winning;
+
         visible = true;
     }
     else
@@ -199,6 +201,11 @@ void InterfacePlayingCard::Render(Renderer &renderer)
         if (highlight)
         {
             renderer.RenderRectangle({0x00, 0x00, 0xFF, 0x50}, &rect);
+        }
+        
+        if (winning)
+        {
+            renderer.RenderRectangle({0x00, 0xFF, 0x00, 0x50}, &rect);
         }
     }
 }
