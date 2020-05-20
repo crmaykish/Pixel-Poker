@@ -10,6 +10,16 @@
  */
 const int PLAYER_HAND_SIZE = 5;
 
+enum PokerGameState
+{
+    POKER_INIT,
+    POKER_WAIT_FOR_BET,
+    POKER_PLACE_BET,
+    POKER_SELECT_CARDS,
+    POKER_DEAL,
+    POKER_GAME_OVER
+};
+
 struct MouseState
 {
     Point DownPos;
@@ -18,33 +28,47 @@ struct MouseState
     bool Clicked;
 };
 
-struct GameStateObject
+struct CardFlag
 {
-    MouseState Mouse;
-
-    bool SelectedCards[PLAYER_HAND_SIZE];
-    std::set<int> WinningCards;
-    
-    Deck SourceDeck;
-    Deck PlayerDiscard;
-    PokerHand PlayerHand;
-
-    int TotalCoins = 100;
-    int LastBet;
-    int LastWinnings;
+    bool Clicked;
+    bool Selected;
+    bool Winning;
 };
 
 class GameState
 {
-    private:
-        void CheckWinnings();
-    public:
-        GameStateObject State;
+private:
+    void StateHandlerInit();
+    void StateHandlerWaitForBet();
+    void StateHandlerPlaceBet();
+    void StateHandlerSelectCards();
+    void StateHandlerDeal();
+    void StateHandlerGameOver();
 
-        void Init();
-        void Update();
-        void Destroy();
-        
+    void CheckWinnings();
+    void ClearCardFlags();
+public:
+    // Game State
+    PokerGameState PokerState;
+    CardFlag CardFlags[PLAYER_HAND_SIZE];
+    Deck SourceDeck;
+    Deck PlayerDiscard;
+    PokerHand PlayerHand;
+    int PlayerCoins = 100;
+    int LastBet;
+    int LastWinnings;
+
+    // Flags
+    // Could think of these as action pending flags to make them more generic
+    bool BetButtonPressed;
+    bool DealButtonPressed;
+
+    // User
+    MouseState Mouse;
+
+    void Init();
+    void Update();
+    void Destroy();
 };
 
 #endif

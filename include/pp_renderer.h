@@ -59,6 +59,7 @@ public:
 
     void RenderTexture(SDL_Texture *tex, SDL_Rect *rect);
     void RenderText(std::string text, TTF_Font *font, SDL_Color color, SDL_Rect *rect);
+    void RenderRectangle(SDL_Color color, SDL_Rect *rect);
 
     void Clear();
     void Present();

@@ -27,6 +27,10 @@ void PixelPoker::Init()
     int buttonH = 120;
     int buttonOffset = 20;
 
+    int cardW = 120;
+    int cardH = 200;
+    int cardGap = 10;
+
     // Background Image
     InterfaceStaticImage *background = new InterfaceStaticImage();
     background->SetRect(0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS);
@@ -61,6 +65,24 @@ void PixelPoker::Init()
     buttonDeal->SetCommand(new DealCommand());
     s.AddInterfaceElement(buttonDeal);
 
+    // Poker Hand
+    for (int i = 0; i < 5; i++)
+    {
+        InterfacePlayingCard *card = new InterfacePlayingCard();
+        card->SetRect(i * (cardGap + cardW), 200, cardW, cardH);
+        
+        card->SetTexturePressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
+        card->SetTextureUnpressed(assetManager.GetTexture(BUTTON_UNPRESSED_0));
+        card->SetFont(assetManager.GetFont(FONT_UI_0));
+        card->SetText("CARD");
+
+        // I don't love passing this in here
+        card->SetAssetManager(&assetManager);
+        card->SetIndex(i);
+        card->SetCommand(new CardClickedCommand(i));
+        s.AddInterfaceElement(card);
+    }
+
 }
 
 void PixelPoker::Run()
@@ -79,7 +101,7 @@ void PixelPoker::Run()
     renderer.Clear();
 
     // Render the active scene
-    GetActiveScene().Render(game, renderer);
+    GetActiveScene().Render(renderer);
 
     renderer.Present();
 

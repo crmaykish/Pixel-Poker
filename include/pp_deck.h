@@ -14,6 +14,7 @@ class Deck
     public:
         Deck(bool standardDeck = false, bool shuffled = false);
         void Shuffle();
+        void Clear();
         bool IsEmpty();
         int Size();
         PlayingCard& CardAt(int index);

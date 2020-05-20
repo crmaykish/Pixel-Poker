@@ -24,11 +24,11 @@ public:
         }
     }
 
-    void Render(GameState &game, Renderer &renderer)
+    void Render(Renderer &renderer)
     {
         for (auto e : ElementList)
         {
-            e->Render(game, renderer);
+            e->Render(renderer);
         }
     }
 };

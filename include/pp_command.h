@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "pp_game_state.h"
+#include "pp_asset_manager.h"
 
 // TODO: execute() probably doesn't need to take in gamestate. pass that in through the constructor
 // along with whatever else we need
@@ -31,7 +32,7 @@ public:
     void Execute(GameState &gameState)
     {
         std::cout << "BET" << std::endl;
-        gameState.State.TotalCoins -= 10;
+        gameState.BetButtonPressed = true;
     }
 };
 
@@ -44,6 +45,7 @@ public:
     void Execute(GameState &gameState)
     {
         std::cout << "DEAL" << std::endl;
+        gameState.DealButtonPressed = true;
     }
 };
 
@@ -60,9 +62,25 @@ public:
 
     void Execute(GameState &gameState)
     {
-        // std::cout << "COINS" << std::endl;
-        // TODO: update the text based on the game state
-        *textPointer = "COINS: " + std::to_string(gameState.State.TotalCoins);
+        *textPointer = "COINS: " + std::to_string(gameState.PlayerCoins);
+    }
+};
+
+class CardClickedCommand : public GameCommand
+{
+private:
+    int index;
+
+public:
+    CardClickedCommand(int i)
+    {
+        index = i;
+    }
+
+    void Execute(GameState &gameState)
+    {
+        gameState.CardFlags[index].Clicked = true;
+        std::cout << "CARD CLICKED: " << index << std::endl;
     }
 };
 

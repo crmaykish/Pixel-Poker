@@ -13,7 +13,7 @@ void InterfaceStaticImage::Update(GameState &game)
 {
 }
 
-void InterfaceStaticImage::Render(GameState &game, Renderer &renderer)
+void InterfaceStaticImage::Render(Renderer &renderer)
 {
     renderer.RenderTexture(texture, &rect);
 }
@@ -43,7 +43,7 @@ void InterfaceText::Update(GameState &game)
     }
 }
 
-void InterfaceText::Render(GameState &game, Renderer &renderer)
+void InterfaceText::Render(Renderer &renderer)
 {
     renderer.RenderText(text, font, {0xFF, 0xFF, 0xFF, 0xFF}, &rect);
 }
@@ -91,9 +91,9 @@ void InterfaceButton::Update(GameState &game)
     {
         previouslyPressed = currentlyPressed;
 
-        bool mouseClicked = game.State.Mouse.Clicked;
-        bool clickedButton = PointInRect(&game.State.Mouse.DownPos, &rect);
-        bool releasedButton = PointInRect(&game.State.Mouse.UpPos, &rect);
+        bool mouseClicked = game.Mouse.Clicked;
+        bool clickedButton = PointInRect(&game.Mouse.DownPos, &rect);
+        bool releasedButton = PointInRect(&game.Mouse.UpPos, &rect);
 
         currentlyPressed = mouseClicked && clickedButton;
 
@@ -111,7 +111,7 @@ void InterfaceButton::Update(GameState &game)
     }
 }
 
-void InterfaceButton::Render(GameState &game, Renderer &renderer)
+void InterfaceButton::Render(Renderer &renderer)
 {
     // TODO: do we need the game state in here? Update() should prep everything before rendering
 
@@ -155,4 +155,50 @@ void InterfaceButton::SetFont(TTF_Font *f)
 void InterfaceButton::SetCommand(GameCommand *com)
 {
     command = com;
+}
+
+// InterfacePlayingCard
+
+void InterfacePlayingCard::SetIndex(int i)
+{
+    index = i;
+}
+
+void InterfacePlayingCard::Update(GameState &game)
+{
+    InterfaceButton::Update(game);
+
+    // Check for visbility / highlighted / etc
+    // Need to store rendering flags in the class
+
+    // what kind of card is this?
+    if (!game.PlayerHand.IsEmpty())
+    {
+        card = game.PlayerHand.CardAt(index);
+
+        highlight = game.CardFlags[index].Selected;
+
+        visible = true;
+    }
+    else
+    {
+        visible = false;
+
+        // TODO: card is invisible, reset it to a safe state
+    }
+    
+}
+
+void InterfacePlayingCard::Render(Renderer &renderer)
+{
+    if (visible)
+    {
+        // TODO: this looks terrible
+        renderer.RenderTexture(assetManager->GetTexture(assetManager->CardFileName(&card)), &rect);
+
+        if (highlight)
+        {
+            renderer.RenderRectangle({0x00, 0x00, 0xFF, 0x50}, &rect);
+        }
+    }
 }

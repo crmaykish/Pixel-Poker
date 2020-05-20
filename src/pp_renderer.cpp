@@ -15,19 +15,19 @@ void Renderer::HandleInput(GameState &gameState)
         else if (event.type == SDL_MOUSEBUTTONDOWN)
         {
             // Set mouse clicked flag
-            gameState.State.Mouse.Clicked = true;
-            SDL_GetMouseState(&gameState.State.Mouse.DownPos.position[0], &gameState.State.Mouse.DownPos.position[1]);
+            gameState.Mouse.Clicked = true;
+            SDL_GetMouseState(&gameState.Mouse.DownPos.position[0], &gameState.Mouse.DownPos.position[1]);
         }
         else if (event.type == SDL_MOUSEBUTTONUP)
         {
             // Clear mouse clicked flag
-            gameState.State.Mouse.Clicked = false;
-            SDL_GetMouseState(&gameState.State.Mouse.UpPos.position[0], &gameState.State.Mouse.UpPos.position[1]);
+            gameState.Mouse.Clicked = false;
+            SDL_GetMouseState(&gameState.Mouse.UpPos.position[0], &gameState.Mouse.UpPos.position[1]);
         }
         else if (event.type == SDL_MOUSEMOTION)
         {
             // continuously capture mouse position
-            SDL_GetMouseState(&gameState.State.Mouse.CurrentPos.position[0], &gameState.State.Mouse.CurrentPos.position[1]);
+            SDL_GetMouseState(&gameState.Mouse.CurrentPos.position[0], &gameState.Mouse.CurrentPos.position[1]);
         }
     }
 }
@@ -77,6 +77,12 @@ void Renderer::RenderText(std::string text, TTF_Font *font, SDL_Color color, SDL
 
     SDL_FreeSurface(s);
     SDL_DestroyTexture(t);
+}
+
+void Renderer::RenderRectangle(SDL_Color color, SDL_Rect *rect)
+{
+    SDL_SetRenderDrawColor(SDLRenderer, color.r, color.g, color.b, color.a);
+    SDL_RenderFillRect(SDLRenderer, rect);
 }
 
 SDL_Texture *Renderer::LoadTexture(std::string fileName)
