@@ -1,4 +1,5 @@
 #include "pp_asset_manager.h"
+#include "pp_logger.h"
 
 void AssetManager::SetRenderer(Renderer *ren)
 {
@@ -18,7 +19,8 @@ SDL_Texture *AssetManager::GetTexture(std::string key)
     if (t == NULL)
     {
         // Attempt to load texture from file
-        t = renderer->LoadTexture(MEDIA_PATH + key);
+        t = renderer->LoadTexture(IMAGES_PATH + key);
+
     }
 
     return t;
@@ -31,7 +33,7 @@ TTF_Font *AssetManager::GetFont(std::string key)
 
     if (f == NULL)
     {
-        f = renderer->LoadFont(FONT_PATH + key);
+        f = renderer->LoadFont(FONTS_PATH + key);
     }
 
     return f;

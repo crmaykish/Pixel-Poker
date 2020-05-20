@@ -5,25 +5,17 @@
 #include <string>
 #include "pp_game_state.h"
 #include "pp_asset_manager.h"
+#include "pp_logger.h"
 
-// TODO: execute() probably doesn't need to take in gamestate. pass that in through the constructor
-// along with whatever else we need
-// that way any element can update based on anything else
-
-// TODO: these are basically just event handlers tied to different things
-// try to keep it clear when they are causes vs effects
-
-// for example: don't do the heavy lifting in these commands
-// just use them to set flags or text state and let the main update loop
-// do the real game logic
-
-// RenderCommand
+#pragma region Base Commands
 
 class Command
 {
 public:
     virtual void Execute() = 0;
 };
+
+// RenderCommand
 
 class RenderCommand : public Command
 {
@@ -51,6 +43,80 @@ public:
     }
 };
 
+#pragma endregion
+
+#pragma region Update Commands
+
+class UpdateTextCommand : public GameCommand
+{
+protected:
+    std::string *Text;
+
+public:
+    virtual std::string GetNewText() = 0;
+
+    UpdateTextCommand(GameState *game, std::string *text) : GameCommand(game)
+    {
+        Text = text;
+    }
+
+    void Execute()
+    {
+        if (Text != NULL)
+        {
+            *Text = GetNewText();
+        }
+    }
+};
+
+class UpdateCoinTextCommand : public UpdateTextCommand
+{
+public:
+    UpdateCoinTextCommand(GameState *game, std::string *text) : UpdateTextCommand(game, text)
+    {
+        Text = text;
+    }
+
+    std::string GetNewText()
+    {
+        return "COINS: " + std::to_string(Game->PlayerCoins);
+    }
+};
+
+class UpdateDealButtonTextCommand : public UpdateTextCommand
+{
+public:
+    UpdateDealButtonTextCommand(GameState *game, std::string *text) : UpdateTextCommand(game, text)
+    {
+        Text = text;
+    }
+
+    std::string GetNewText()
+    {
+        return (Game->PokerState == POKER_GAME_OVER) ? "PLAY AGAIN" : "DEAL";
+    }
+};
+
+// TODO: this is insane - running an command function every frame to look up a static text value
+// fix this with a static text UI element
+class UpdateStaticTextCommand : public UpdateTextCommand
+{
+public:
+    UpdateStaticTextCommand(GameState *game, std::string *text) : UpdateTextCommand(game, text)
+    {
+        Text = text;
+    }
+
+    std::string GetNewText()
+    {
+        return *Text;
+    }
+};
+
+#pragma endregion
+
+#pragma region Button Click Handlers
+
 /**
  * @brief Command to signal a bet has been placed
  */
@@ -61,7 +127,7 @@ public:
 
     void Execute()
     {
-        std::cout << "BET" << std::endl;
+        Log("BET button pressed");
         Game->BetButtonPressed = true;
     }
 };
@@ -76,30 +142,8 @@ public:
 
     void Execute()
     {
-        std::cout << "DEAL" << std::endl;
+        Log("Deal button pressed");
         Game->DealButtonPressed = true;
-    }
-};
-
-class UpdateCoinTextCommand : public GameCommand
-{
-private:
-    std::string *Text;
-
-public:
-    UpdateCoinTextCommand(GameState *game) : GameCommand(game) {}
-
-    void Execute()
-    {
-        if (Text != NULL)
-        {
-            *Text = "COINS: " + std::to_string(Game->PlayerCoins);
-        }
-    }
-
-    void SetText(std::string *text)
-    {
-        Text = text;
     }
 };
 
@@ -113,8 +157,8 @@ public:
 
     void Execute()
     {
+        Log("CARD CLICKED: " + std::to_string(CardIndex));
         Game->CardFlags[CardIndex].Clicked = true;
-        std::cout << "CARD CLICKED: " << CardIndex << std::endl;
     }
 
     void SetCardIndex(int cardIndex)
@@ -122,5 +166,7 @@ public:
         CardIndex = cardIndex;
     }
 };
+
+#pragma endregion
 
 #endif

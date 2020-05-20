@@ -1,7 +1,10 @@
 #include "pp_pixel_poker.h"
+#include "pp_logger.h"
 
 void PixelPoker::Init()
 {
+    Log("Starting Pixel Poker...", LOG_INFO);
+
     // Set up game state
     game.Init();
 
@@ -23,6 +26,8 @@ void PixelPoker::Init()
 
     // TODO: create commands for updating UI elements as well? or just let that happen in Update()
 
+
+
     int buttonW = 400;
     int buttonH = 120;
     int buttonOffset = 20;
@@ -34,35 +39,40 @@ void PixelPoker::Init()
     // Background Image
     InterfaceStaticImage *background = new InterfaceStaticImage(&assetManager);
     background->SetRectangle(0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS);
-    background->SetTextureKey(TEXTURE_BG_0);
+    background->SetTextureKey(ASSET_IMAGE_BG_0);
 
     s.AddInterfaceElement(background);
 
     InterfaceText *coinsText = new InterfaceText(&assetManager);
     coinsText->SetRectangle(buttonOffset, buttonOffset, buttonW, buttonH);
-    coinsText->SetFontKey(FONT_UI_0);
+    coinsText->SetFontKey(ASSET_FONT_MONO_0);
 
-    // coinsText->SetUpdateCommand(new UpdateCoinTextCommand(coinsText->GetText()));
+    // TODO: It seems circular and weird to set a command and pass a reference to a member of this object
+    coinsText->SetUpdateCommand(new UpdateCoinTextCommand(&game, coinsText->GetText()));
     s.AddInterfaceElement(coinsText);
 
     // Bet Button
     InterfaceButton *buttonBet = new InterfaceButton(&assetManager);
     buttonBet->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
-    buttonBet->SetDownTextureKey(TEXTURE_BG_0);
-    buttonBet->SetUpTextureKey(BUTTON_UNPRESSED_0);
-    buttonBet->SetFontKey(FONT_UI_0);
-    // buttonBet->SetText("BET 10");
+    buttonBet->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    buttonBet->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
+    buttonBet->SetFontKey(ASSET_FONT_MONO_0);
+
+    std::string *betString = new std::string("BET 10");
+
+    buttonBet->SetUpdateCommand(new UpdateStaticTextCommand(&game, betString));
+
     buttonBet->SetClickedCommand(new BetCommand(&game));
     s.AddInterfaceElement(buttonBet);
 
     // Deal Button
     InterfaceButton *buttonDeal = new InterfaceButton(&assetManager);
     buttonDeal->SetRectangle(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
-    buttonDeal->SetDownTextureKey(TEXTURE_BG_0);
-    buttonDeal->SetUpTextureKey(BUTTON_UNPRESSED_0);
-    buttonDeal->SetFontKey(FONT_UI_0);
-    // buttonDeal->SetText("DEAL");
+    buttonDeal->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
+    buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
     buttonDeal->SetClickedCommand(new DealCommand(&game));
+    buttonDeal->SetUpdateCommand(new UpdateDealButtonTextCommand(&game, buttonDeal->GetText()));
     s.AddInterfaceElement(buttonDeal);
 
     // Poker Hand
