@@ -7,15 +7,14 @@
 #include <SDL2/SDL_ttf.h>
 #include "pp_renderer.h"
 
-const std::string MEDIA_PATH = "/home/colin/nas/projects/cpp_games/pixel_poker/media/images/";
-const std::string FONT_PATH = "/usr/share/fonts/truetype/freefont/";
+const std::string ASSETS_PATH = "assets/";
+const std::string IMAGES_PATH = ASSETS_PATH + "images/";
+const std::string FONTS_PATH = ASSETS_PATH + "fonts/";
 
 //TODO: find a better way to key assets instead of file names
-
-const std::string TEXTURE_BG_0 = "bg.png";
-const std::string BUTTON_PRESSED_0 = "deal_button.png";
-const std::string BUTTON_UNPRESSED_0 = "deal_button.png";
-const std::string FONT_UI_0 = "FreeMono.ttf";
+const std::string ASSET_IMAGE_BG_0 = "bg.png";
+const std::string ASSET_IMAGE_BTN_UP_0 = "deal_button.png";
+const std::string ASSET_FONT_MONO_0 = "FreeMono.ttf";
 
 class AssetManager
 {

@@ -5,25 +5,17 @@
 #include <string>
 #include "pp_game_state.h"
 #include "pp_asset_manager.h"
+#include "pp_logger.h"
 
-// TODO: execute() probably doesn't need to take in gamestate. pass that in through the constructor
-// along with whatever else we need
-// that way any element can update based on anything else
-
-// TODO: these are basically just event handlers tied to different things
-// try to keep it clear when they are causes vs effects
-
-// for example: don't do the heavy lifting in these commands
-// just use them to set flags or text state and let the main update loop
-// do the real game logic
-
-// RenderCommand
+// Command
 
 class Command
 {
 public:
     virtual void Execute() = 0;
 };
+
+// RenderCommand
 
 class RenderCommand : public Command
 {
@@ -61,7 +53,7 @@ public:
 
     void Execute()
     {
-        std::cout << "BET" << std::endl;
+        Log("BET button pressed");
         Game->BetButtonPressed = true;
     }
 };
@@ -76,7 +68,7 @@ public:
 
     void Execute()
     {
-        std::cout << "DEAL" << std::endl;
+        Log("Deal button pressed");
         Game->DealButtonPressed = true;
     }
 };
@@ -113,8 +105,8 @@ public:
 
     void Execute()
     {
+        Log("CARD CLICKED: " + std::to_string(CardIndex));
         Game->CardFlags[CardIndex].Clicked = true;
-        std::cout << "CARD CLICKED: " << CardIndex << std::endl;
     }
 
     void SetCardIndex(int cardIndex)

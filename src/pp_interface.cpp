@@ -1,4 +1,5 @@
 #include "pp_interface.h"
+#include "pp_logger.h"
 
 // InterfaceElement
 
@@ -39,7 +40,16 @@ void InterfaceStaticImage::Render(Renderer &renderer)
         PreRenderCommand->Execute();
     }
 
-    renderer.RenderTexture(Assets->GetTexture(TextureKey), &Rectangle);
+    SDL_Texture *tex = Assets->GetTexture(TextureKey);
+
+    if (tex == NULL)
+    {
+        Log(TextureKey + " is NULL", LOG_WARNING);
+    }
+    else
+    {
+        renderer.RenderTexture(tex, &Rectangle);
+    }
 }
 
 void InterfaceStaticImage::Destroy() {}

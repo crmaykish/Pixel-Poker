@@ -1,7 +1,10 @@
 #include "pp_pixel_poker.h"
+#include "pp_logger.h"
 
 void PixelPoker::Init()
 {
+    Log("Starting Pixel Poker...", LOG_INFO);
+
     // Set up game state
     game.Init();
 
@@ -34,23 +37,23 @@ void PixelPoker::Init()
     // Background Image
     InterfaceStaticImage *background = new InterfaceStaticImage(&assetManager);
     background->SetRectangle(0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS);
-    background->SetTextureKey(TEXTURE_BG_0);
+    background->SetTextureKey(ASSET_IMAGE_BG_0);
 
     s.AddInterfaceElement(background);
 
     InterfaceText *coinsText = new InterfaceText(&assetManager);
     coinsText->SetRectangle(buttonOffset, buttonOffset, buttonW, buttonH);
-    coinsText->SetFontKey(FONT_UI_0);
+    coinsText->SetFontKey(ASSET_FONT_MONO_0);
 
     // coinsText->SetUpdateCommand(new UpdateCoinTextCommand(coinsText->GetText()));
-    s.AddInterfaceElement(coinsText);
+    // s.AddInterfaceElement(coinsText);
 
     // Bet Button
     InterfaceButton *buttonBet = new InterfaceButton(&assetManager);
     buttonBet->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
-    buttonBet->SetDownTextureKey(TEXTURE_BG_0);
-    buttonBet->SetUpTextureKey(BUTTON_UNPRESSED_0);
-    buttonBet->SetFontKey(FONT_UI_0);
+    buttonBet->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    buttonBet->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
+    buttonBet->SetFontKey(ASSET_FONT_MONO_0);
     // buttonBet->SetText("BET 10");
     buttonBet->SetClickedCommand(new BetCommand(&game));
     s.AddInterfaceElement(buttonBet);
@@ -58,9 +61,9 @@ void PixelPoker::Init()
     // Deal Button
     InterfaceButton *buttonDeal = new InterfaceButton(&assetManager);
     buttonDeal->SetRectangle(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
-    buttonDeal->SetDownTextureKey(TEXTURE_BG_0);
-    buttonDeal->SetUpTextureKey(BUTTON_UNPRESSED_0);
-    buttonDeal->SetFontKey(FONT_UI_0);
+    buttonDeal->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
+    buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
     // buttonDeal->SetText("DEAL");
     buttonDeal->SetClickedCommand(new DealCommand(&game));
     s.AddInterfaceElement(buttonDeal);

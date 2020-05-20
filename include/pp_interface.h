@@ -19,15 +19,15 @@ class InterfaceElement
 protected:
     // State
     SDL_Rect Rectangle;
-    bool Active;
-    bool Visible;
+    bool Active = true;
+    bool Visible = true;
 
     // Behavior
-    Command *UpdateCommand; // TODO: might need pre and post update commands
-    Command *PreRenderCommand;
+    Command *UpdateCommand = NULL; // TODO: might need pre and post update commands
+    Command *PreRenderCommand = NULL;
 
     // Assets
-    AssetManager *Assets; // TODO: this never gets set anywhere
+    AssetManager *Assets = NULL; // TODO: this never gets set anywhere
 
 public:
     // Virtual Methods
@@ -80,8 +80,8 @@ public:
 class InterfaceButton : public InterfaceText
 {
 protected:
-    bool ClickedPreviously;
-    bool ClickedCurrently;
+    bool ClickedPreviously = false;
+    bool ClickedCurrently = false;
 
     std::string UpTextureKey;
     std::string DownTextureKey;
@@ -110,8 +110,8 @@ protected:
     int IndexInHand;
 
     // Internal state
-    bool Highlighted;
-    bool Winning;
+    bool Highlighted = false;
+    bool Winning = false;
     PlayingCard Card; // TODO: find a way to avoid storing the card object?
 
 public:
