@@ -57,11 +57,7 @@ void PixelPoker::Init()
     buttonBet->SetDownTextureKey(ASSET_IMAGE_BG_0);
     buttonBet->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonBet->SetFontKey(ASSET_FONT_MONO_0);
-
-    std::string *betString = new std::string("BET 10");
-
-    buttonBet->SetUpdateCommand(new UpdateStaticTextCommand(&game, betString));
-
+    buttonBet->SetText("BET 10");
     buttonBet->SetClickedCommand(new BetCommand(&game));
     s.AddInterfaceElement(buttonBet);
 

@@ -72,14 +72,9 @@ public:
     void Update(GameState &game);
     void Render(Renderer &renderer);
     void Destroy();
-
     void SetFontKey(std::string fontKey);
-
-    // move this to CPP file
-    std::string *GetText()
-    {
-        return &Text;
-    }
+    void SetText(std::string text);
+    std::string *GetText();
 };
 
 // InterfaceButton

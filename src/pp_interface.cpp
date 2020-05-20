@@ -89,6 +89,16 @@ void InterfaceText::SetFontKey(std::string fontKey)
     FontKey = fontKey;
 }
 
+void InterfaceText::SetText(std::string text)
+{
+    Text = text;
+}
+
+std::string *InterfaceText::GetText()
+{
+    return &Text;
+}
+
 // InterfaceButton
 
 void InterfaceButton::Update(GameState &game)
