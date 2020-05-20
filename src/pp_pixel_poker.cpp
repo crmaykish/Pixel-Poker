@@ -1,6 +1,13 @@
 #include "pp_pixel_poker.h"
 #include "pp_logger.h"
 
+#include "commands/pp_command_bet.h"
+#include "commands/pp_command_deal.h"
+#include "commands/pp_command_card_clicked.h"
+#include "commands/pp_command_update_coin_display.h"
+#include "commands/pp_command_update_bet_button.h"
+#include "commands/pp_command_update_deal_button.h"
+
 void PixelPoker::Init()
 {
     Log("Starting Pixel Poker...", LOG_INFO);
@@ -18,16 +25,6 @@ void PixelPoker::Init()
     scenes.push_back(Scene());
     Scene &s = scenes.at(0);
 
-    // TODO: instantiate a few commands in the game init instead of here
-    // GameCommand *hello = new HelloCommand();
-
-    // TODO: just have commands set flags instead of doing the work themselves
-    // then let the main game update code do the work
-
-    // TODO: create commands for updating UI elements as well? or just let that happen in Update()
-
-
-
     int buttonW = 400;
     int buttonH = 120;
     int buttonOffset = 20;
@@ -40,15 +37,13 @@ void PixelPoker::Init()
     InterfaceStaticImage *background = new InterfaceStaticImage(&assetManager);
     background->SetRectangle(0, 0, WINDOW_W_PIXELS, WINDOW_H_PIXELS);
     background->SetTextureKey(ASSET_IMAGE_BG_0);
-
     s.AddInterfaceElement(background);
 
+    // Coins Display
     InterfaceText *coinsText = new InterfaceText(&assetManager);
     coinsText->SetRectangle(buttonOffset, buttonOffset, buttonW, buttonH);
     coinsText->SetFontKey(ASSET_FONT_MONO_0);
-
-    // TODO: It seems circular and weird to set a command and pass a reference to a member of this object
-    coinsText->SetUpdateCommand(new UpdateCoinTextCommand(&game, coinsText->GetText()));
+    coinsText->SetUpdateCommand(new UpdateCoinDisplayCommand(&game, coinsText));
     s.AddInterfaceElement(coinsText);
 
     // Bet Button
@@ -58,6 +53,8 @@ void PixelPoker::Init()
     buttonBet->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonBet->SetFontKey(ASSET_FONT_MONO_0);
     buttonBet->SetText("BET 10");
+    buttonBet->Enable();    // TODO: this should be controlled by an update command
+    buttonBet->SetUpdateCommand(new UpdateBetButtonCommand(&game, buttonBet));
     buttonBet->SetClickedCommand(new BetCommand(&game));
     s.AddInterfaceElement(buttonBet);
 
@@ -68,7 +65,7 @@ void PixelPoker::Init()
     buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
     buttonDeal->SetClickedCommand(new DealCommand(&game));
-    buttonDeal->SetUpdateCommand(new UpdateDealButtonTextCommand(&game, buttonDeal->GetText()));
+    buttonDeal->SetUpdateCommand(new UpdateDealButtonCommand(&game, buttonDeal));
     s.AddInterfaceElement(buttonDeal);
 
     // Poker Hand
@@ -76,13 +73,9 @@ void PixelPoker::Init()
     {
         InterfacePlayingCard *card = new InterfacePlayingCard(&assetManager);
         card->SetRectangle(cardGap + i * (cardGap + cardW), 200, cardW, cardH);
-
         card->SetIndexInHand(i);
-
-        CardClickedCommand *com = new CardClickedCommand(&game);
-        com->SetCardIndex(i);
-
-        card->SetClickedCommand(com);
+        card->Enable();
+        card->SetClickedCommand(new CardClickedCommand(&game, card));
         s.AddInterfaceElement(card);
     }
 }

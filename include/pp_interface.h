@@ -8,6 +8,8 @@
 #include "pp_game_state.h"
 #include "pp_renderer.h"
 #include "pp_command.h"
+#include "pp_interface.h"
+#include "pp_asset_manager.h"
 
 // TODO: might be possible to remove the dependency on SDL and push it all to the renderer
 // Just hold on to a texture key and use a generic position struct
@@ -19,7 +21,6 @@ class InterfaceElement
 protected:
     // State
     SDL_Rect Rectangle;
-    bool Active = true;
     bool Visible = true;
 
     // Behavior
@@ -85,6 +86,8 @@ protected:
     bool ClickedPreviously = false;
     bool ClickedCurrently = false;
 
+    bool Enabled = false;
+
     std::string UpTextureKey;
     std::string DownTextureKey;
 
@@ -99,6 +102,16 @@ public:
     void SetClickedCommand(GameCommand *clickedCommand);
     void SetUpTextureKey(std::string upTextureKey);
     void SetDownTextureKey(std::string downTextureKey);
+
+    void Enable()
+    {
+        Enabled = true;
+    }
+
+    void Disable()
+    {
+        Enabled = false;
+    }
 };
 
 // InterfacePlayingCard
@@ -122,6 +135,7 @@ public:
     void Render(Renderer &renderer);
 
     void SetIndexInHand(int index);
+    int GetIndexInHand();
 };
 
 #endif

@@ -16,6 +16,15 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
  - Shuffle and dealing animations
  - Highlight win type and amount
  - Track some basic statistics (win rate, bet amounts, number of hands, etc)
+ - Final write-up on lessons learned, mistakes made, future ideas, etc
+
+## Architecture Ideas
+- Combine collections of commands instead of having to attach every one separately, e.g. all buttons will have an update handler and a clicked callback.
+- Cache textures instead of loading from file every time, see if it helps CPU usage
 
 ## Bugs
 - Sometimes drawing only four cards
+- a ton of memory leaks
+
+## Todo List
+- clicking play again should hide the old cards

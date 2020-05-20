@@ -1,5 +1,6 @@
 #include "pp_interface.h"
 #include "pp_logger.h"
+#include "pp_asset_manager.h"
 
 // InterfaceElement
 
@@ -103,16 +104,19 @@ std::string *InterfaceText::GetText()
 
 void InterfaceButton::Update(GameState &game)
 {
-    bool mouseClicked = game.Mouse.Clicked;
-
-    ClickedPreviously = ClickedCurrently;
-    ClickedCurrently = mouseClicked && PointInRect(&game.Mouse.DownPos, &Rectangle);
-
-    if (ClickedPreviously && !ClickedCurrently && PointInRect(&game.Mouse.UpPos, &Rectangle))
+    if (Enabled)
     {
-        if (ClickedCommand != NULL)
+        bool mouseClicked = game.Mouse.Clicked;
+
+        ClickedPreviously = ClickedCurrently;
+        ClickedCurrently = mouseClicked && PointInRect(&game.Mouse.DownPos, &Rectangle);
+
+        if (ClickedPreviously && !ClickedCurrently && PointInRect(&game.Mouse.UpPos, &Rectangle))
         {
-            ClickedCommand->Execute();
+            if (ClickedCommand != NULL)
+            {
+                ClickedCommand->Execute();
+            }
         }
     }
 
@@ -136,6 +140,11 @@ void InterfaceButton::Render(Renderer &renderer)
     if (!Text.empty())
     {
         renderer.RenderText(Text, Assets->GetFont(FontKey), {0xFF, 0xFF, 0xFF, 0xFF}, &Rectangle);
+    }
+
+    if (!Enabled)
+    {
+        renderer.RenderRectangle({0x00, 0x00, 0x00, 0x50}, &Rectangle);
     }
 }
 
@@ -161,6 +170,11 @@ void InterfaceButton::SetDownTextureKey(std::string downTextureKey)
 void InterfacePlayingCard::SetIndexInHand(int i)
 {
     IndexInHand = i;
+}
+
+int InterfacePlayingCard::GetIndexInHand()
+{
+    return IndexInHand;
 }
 
 void InterfacePlayingCard::Update(GameState &game)
