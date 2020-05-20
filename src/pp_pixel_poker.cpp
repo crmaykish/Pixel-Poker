@@ -26,6 +26,8 @@ void PixelPoker::Init()
 
     // TODO: create commands for updating UI elements as well? or just let that happen in Update()
 
+
+
     int buttonW = 400;
     int buttonH = 120;
     int buttonOffset = 20;
@@ -45,8 +47,9 @@ void PixelPoker::Init()
     coinsText->SetRectangle(buttonOffset, buttonOffset, buttonW, buttonH);
     coinsText->SetFontKey(ASSET_FONT_MONO_0);
 
-    // coinsText->SetUpdateCommand(new UpdateCoinTextCommand(coinsText->GetText()));
-    // s.AddInterfaceElement(coinsText);
+    // TODO: It seems circular and weird to set a command and pass a reference to a member of this object
+    coinsText->SetUpdateCommand(new UpdateCoinTextCommand(&game, coinsText->GetText()));
+    s.AddInterfaceElement(coinsText);
 
     // Bet Button
     InterfaceButton *buttonBet = new InterfaceButton(&assetManager);
@@ -54,7 +57,11 @@ void PixelPoker::Init()
     buttonBet->SetDownTextureKey(ASSET_IMAGE_BG_0);
     buttonBet->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonBet->SetFontKey(ASSET_FONT_MONO_0);
-    // buttonBet->SetText("BET 10");
+
+    std::string *betString = new std::string("BET 10");
+
+    buttonBet->SetUpdateCommand(new UpdateStaticTextCommand(&game, betString));
+
     buttonBet->SetClickedCommand(new BetCommand(&game));
     s.AddInterfaceElement(buttonBet);
 
@@ -64,8 +71,8 @@ void PixelPoker::Init()
     buttonDeal->SetDownTextureKey(ASSET_IMAGE_BG_0);
     buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
-    // buttonDeal->SetText("DEAL");
     buttonDeal->SetClickedCommand(new DealCommand(&game));
+    buttonDeal->SetUpdateCommand(new UpdateDealButtonTextCommand(&game, buttonDeal->GetText()));
     s.AddInterfaceElement(buttonDeal);
 
     // Poker Hand

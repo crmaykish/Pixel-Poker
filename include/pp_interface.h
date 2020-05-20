@@ -23,6 +23,7 @@ protected:
     bool Visible = true;
 
     // Behavior
+    // TODO: may need an array of commands to register an element as multiple things
     Command *UpdateCommand = NULL; // TODO: might need pre and post update commands
     Command *PreRenderCommand = NULL;
 
@@ -73,6 +74,12 @@ public:
     void Destroy();
 
     void SetFontKey(std::string fontKey);
+
+    // move this to CPP file
+    std::string *GetText()
+    {
+        return &Text;
+    }
 };
 
 // InterfaceButton

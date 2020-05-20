@@ -7,7 +7,7 @@
 #include "pp_asset_manager.h"
 #include "pp_logger.h"
 
-// Command
+#pragma region Base Commands
 
 class Command
 {
@@ -43,6 +43,80 @@ public:
     }
 };
 
+#pragma endregion
+
+#pragma region Update Commands
+
+class UpdateTextCommand : public GameCommand
+{
+protected:
+    std::string *Text;
+
+public:
+    virtual std::string GetNewText() = 0;
+
+    UpdateTextCommand(GameState *game, std::string *text) : GameCommand(game)
+    {
+        Text = text;
+    }
+
+    void Execute()
+    {
+        if (Text != NULL)
+        {
+            *Text = GetNewText();
+        }
+    }
+};
+
+class UpdateCoinTextCommand : public UpdateTextCommand
+{
+public:
+    UpdateCoinTextCommand(GameState *game, std::string *text) : UpdateTextCommand(game, text)
+    {
+        Text = text;
+    }
+
+    std::string GetNewText()
+    {
+        return "COINS: " + std::to_string(Game->PlayerCoins);
+    }
+};
+
+class UpdateDealButtonTextCommand : public UpdateTextCommand
+{
+public:
+    UpdateDealButtonTextCommand(GameState *game, std::string *text) : UpdateTextCommand(game, text)
+    {
+        Text = text;
+    }
+
+    std::string GetNewText()
+    {
+        return (Game->PokerState == POKER_GAME_OVER) ? "PLAY AGAIN" : "DEAL";
+    }
+};
+
+// TODO: this is insane - running an command function every frame to look up a static text value
+// fix this with a static text UI element
+class UpdateStaticTextCommand : public UpdateTextCommand
+{
+public:
+    UpdateStaticTextCommand(GameState *game, std::string *text) : UpdateTextCommand(game, text)
+    {
+        Text = text;
+    }
+
+    std::string GetNewText()
+    {
+        return *Text;
+    }
+};
+
+#pragma endregion
+
+#pragma region Button Click Handlers
+
 /**
  * @brief Command to signal a bet has been placed
  */
@@ -73,28 +147,6 @@ public:
     }
 };
 
-class UpdateCoinTextCommand : public GameCommand
-{
-private:
-    std::string *Text;
-
-public:
-    UpdateCoinTextCommand(GameState *game) : GameCommand(game) {}
-
-    void Execute()
-    {
-        if (Text != NULL)
-        {
-            *Text = "COINS: " + std::to_string(Game->PlayerCoins);
-        }
-    }
-
-    void SetText(std::string *text)
-    {
-        Text = text;
-    }
-};
-
 class CardClickedCommand : public GameCommand
 {
 private:
@@ -114,5 +166,7 @@ public:
         CardIndex = cardIndex;
     }
 };
+
+#pragma endregion
 
 #endif
