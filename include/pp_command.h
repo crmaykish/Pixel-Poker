@@ -3,6 +3,7 @@
 
 #include "pp_renderer.h"
 #include "pp_game_state.h"
+#include "pp_sound_player.h"
 
 class Command
 {
@@ -27,5 +28,14 @@ protected:
 public:
     GameCommand(GameState *game);
 };
+
+class SoundCommand : public Command
+{
+protected:
+    SoundPlayer Sounds;
+
+public:
+    SoundCommand(SoundPlayer *sounds);
+}
 
 #endif // PP_COMMAND_H

@@ -10,3 +10,7 @@ GameCommand::GameCommand(GameState *game)
     Game = game;
 }
 
+SoundCommand::SoundCommand(SoundPlayer *sounds)
+{
+    Sounds = sounds;
+}
