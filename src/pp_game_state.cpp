@@ -53,6 +53,9 @@ void GameState::StateHandlerInit()
     ActualBet = 0;
     Win = LOSE;
     LastWinAmount = 0;
+
+    Command::HandleCommandList(NewGameCommands);
+
     PokerState = POKER_WAIT_FOR_BET;
 }
 
@@ -140,7 +143,7 @@ void GameState::StateHandlerDeal()
     {
         Stats.HandsWon++;
         Stats.CurrentWinningStreak++;
-        
+
         if (Stats.CurrentWinningStreak > Stats.LongestWinningStreak)
         {
             Stats.LongestWinningStreak = Stats.CurrentWinningStreak;
@@ -166,6 +169,15 @@ void GameState::StateHandlerDeal()
     Log("---");
 
     PokerState = POKER_GAME_OVER;
+
+    if (Win)
+    {
+        Command::HandleCommandList(WinCommands);
+    }
+    else
+    {
+        Command::HandleCommandList(LoseCommands);
+    }
 }
 
 void GameState::StateHandlerGameOver()
@@ -265,4 +277,19 @@ void GameState::ClearCardFlags()
         CardFlags[i].Selected = false;
         CardFlags[i].Winning = false;
     }
+}
+
+void GameState::RegisterNewGameCommand(Command *command)
+{
+    NewGameCommands.push_back(command);
+}
+
+void GameState::RegisterWinCommand(Command *command)
+{
+    WinCommands.push_back(command);
+}
+
+void GameState::RegisterLoseGameCommand(Command *command)
+{
+    LoseCommands.push_back(command);
 }

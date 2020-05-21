@@ -7,7 +7,7 @@
 
 #include "pp_game_state.h"
 #include "pp_renderer.h"
-#include "pp_command.h"
+#include "pp_game_command.h"
 #include "pp_interface.h"
 #include "pp_asset_manager.h"
 

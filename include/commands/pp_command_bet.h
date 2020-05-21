@@ -1,7 +1,7 @@
 #ifndef PP_COMMAND_BET_H
 #define PP_COMMAND_BET_H
 
-#include "pp_command.h"
+#include "pp_game_command.h"
 #include "pp_game_state.h"
 #include "pp_sound_player.h"
 

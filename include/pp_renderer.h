@@ -7,8 +7,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 
-#include "pp_game_state.h"
-
 const std::string WINDOW_TITLE = "PIXEL POKER";
 
 const int DEFAULT_FONT_SIZE = 32;
@@ -54,9 +52,6 @@ public:
     void Destroy();
 
     void Sleep();
-
-    // TODO: Don't handle input inside the renderer class
-    void HandleInput(GameState &gameState);
 
     void RenderTexture(SDL_Texture *tex, SDL_Rect *rect);
     void RenderText(std::string text, TTF_Font *font, SDL_Color color, SDL_Rect *rect);

@@ -7,6 +7,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include "pp_renderer.h"
+#include "pp_card.h"
 
 const std::string ASSETS_PATH = "assets/";
 const std::string IMAGES_PATH = ASSETS_PATH + "images/";

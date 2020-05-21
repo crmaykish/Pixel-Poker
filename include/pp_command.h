@@ -1,14 +1,25 @@
 #ifndef PP_COMMAND_H
 #define PP_COMMAND_H
 
+#include <vector>
 #include "pp_renderer.h"
-#include "pp_game_state.h"
 #include "pp_sound_player.h"
 
 class Command
 {
 public:
     virtual void Execute() = 0;
+    
+    static void HandleCommandList(std::vector<Command *> commands)
+    {
+        for (auto c : commands)
+        {
+            if (c != NULL)
+            {
+                c->Execute();
+            }
+        }
+    }
 };
 
 class RenderCommand : public Command
@@ -18,15 +29,6 @@ protected:
 
 public:
     RenderCommand(Renderer *render);
-};
-
-class GameCommand : public Command
-{
-protected:
-    GameState *Game;
-
-public:
-    GameCommand(GameState *game);
 };
 
 class SoundCommand : public Command

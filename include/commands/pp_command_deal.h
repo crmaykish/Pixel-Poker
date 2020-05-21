@@ -1,7 +1,7 @@
 #ifndef PP_COMMAND_DEAL_H
 #define PP_COMMAND_DEAL_H
 
-#include "pp_command.h"
+#include "pp_game_command.h"
 
 class DealCommand : public GameCommand
 {

@@ -2,8 +2,10 @@
 #define PP_GAME_STATE_H
 
 #include <set>
+#include <vector>
 #include "pp_poker_hand.h"
 #include "pp_point.h"
+#include "pp_command.h"
 
 /**
  * @brief Number of cards in a poker hand
@@ -72,6 +74,10 @@ struct CardFlag
 class GameState
 {
 private:
+    std::vector<Command *> NewGameCommands;
+    std::vector<Command *> WinCommands;
+    std::vector<Command *> LoseCommands;
+
     void StateHandlerInit();
     void StateHandlerWaitForBet();
     void StateHandlerPlaceBet();
@@ -110,6 +116,10 @@ public:
     void Init();
     void Update();
     void Destroy();
+
+    void RegisterNewGameCommand(Command *command);
+    void RegisterWinCommand(Command *command);
+    void RegisterLoseGameCommand(Command *command);
 };
 
 #endif

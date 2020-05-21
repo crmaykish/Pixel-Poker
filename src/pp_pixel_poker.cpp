@@ -29,6 +29,17 @@ void PixelPoker::Init()
     sounds.Init();
     sounds.SetAssetManager(&assetManager);
 
+    // Preload the sound effects
+    // TODO: loading a sound from file and immediately playing fails the first time, preloading fixes it, figure out why
+    assetManager.GetSound(ASSET_SOUND_WIN_0);
+    assetManager.GetSound(ASSET_SOUND_LOSE_0);
+    assetManager.GetSound(ASSET_SOUND_BUTTON_0);
+    assetManager.GetSound(ASSET_SOUND_CARD_CLICK_0);
+
+    // Register sound effect commands for winning and losing a hand
+    game.RegisterWinCommand(new PlaySoundCommand(&sounds, ASSET_SOUND_WIN_0));
+    game.RegisterLoseGameCommand(new PlaySoundCommand(&sounds, ASSET_SOUND_LOSE_0));
+
     // Set up the first scene
     scenes.push_back(Scene());
     Scene &s = scenes.at(0);
@@ -146,7 +157,7 @@ void PixelPoker::Init()
 void PixelPoker::Run()
 {
     // Handle user input
-    renderer.HandleInput(game);
+    input.HandleInput(game);
 
     // Update UI elements to respond to user input
     GetActiveScene().Update(game);

@@ -1,6 +1,7 @@
 #include "pp_interface.h"
 #include "pp_logger.h"
 #include "pp_asset_manager.h"
+#include "pp_command.h"
 
 // InterfaceElement
 
@@ -116,11 +117,11 @@ void InterfaceButton::Update(GameState &game)
 
         if (ClickedPreviously && !ClickedCurrently && PointInRect(&game.Mouse.UpPos, &Rectangle))
         {
-            for (auto command : ClickedCommands)
+            for (auto c : ClickedCommands)
             {
-                if (command != NULL)
+                if (c != NULL)
                 {
-                    command->Execute();
+                    c->Execute();
                 }
             }
         }
