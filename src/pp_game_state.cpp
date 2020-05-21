@@ -1,4 +1,5 @@
 #include "pp_game_state.h"
+#include "pp_logger.h"
 
 void GameState::Init()
 {
@@ -51,6 +52,7 @@ void GameState::StateHandlerInit()
     PlayerBet = BET_NONE;
     ActualBet = 0;
     Win = LOSE;
+    LastWinAmount = 0;
     PokerState = POKER_WAIT_FOR_BET;
 }
 
@@ -68,7 +70,9 @@ void GameState::StateHandlerPlaceBet()
     if (PlayerCoins >= PlayerBet)
     {
         ActualBet = PlayerBet;
-    } else {
+    }
+    else
+    {
         ActualBet = PlayerCoins;
     }
 
@@ -118,12 +122,48 @@ void GameState::StateHandlerDeal()
 
     // Check the final hand and award winnings
     Win = CheckWinnings();
-    PlayerCoins += (ActualBet * Win);
+    LastWinAmount = ActualBet * Win;
+    PlayerCoins += LastWinAmount;
 
+    // Flag the winning cards in the hand
     for (auto w : WinningCards)
     {
         CardFlags[w].Winning = true;
     }
+
+    // Track hand statistics
+    Stats.HandsPlayed++;
+    Stats.TotalCoinsBet += ActualBet;
+    Stats.TotalCoinsWon += (ActualBet * Win);
+
+    if (Win != LOSE)
+    {
+        Stats.HandsWon++;
+        Stats.CurrentWinningStreak++;
+        
+        if (Stats.CurrentWinningStreak > Stats.LongestWinningStreak)
+        {
+            Stats.LongestWinningStreak = Stats.CurrentWinningStreak;
+        }
+
+        if (PlayerCoins > Stats.MostCoins)
+        {
+            Stats.MostCoins = PlayerCoins;
+        }
+    }
+    else
+    {
+        Stats.CurrentWinningStreak = 0;
+    }
+
+    Log("---");
+    Log("Hands Won " + std::to_string(Stats.HandsWon) + " / " + std::to_string(Stats.HandsPlayed));
+    Log("Coins Bet: " + std::to_string(Stats.TotalCoinsBet));
+    Log("Coins Won: " + std::to_string(Stats.TotalCoinsWon));
+    Log("Most Coins: " + std::to_string(Stats.MostCoins));
+    Log("Current Streak: " + std::to_string(Stats.CurrentWinningStreak));
+    Log("Longest Winning Streak: " + std::to_string(Stats.LongestWinningStreak));
+    Log("---");
 
     PokerState = POKER_GAME_OVER;
 }

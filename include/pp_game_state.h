@@ -43,6 +43,17 @@ enum PokerGameState
     POKER_GAME_OVER
 };
 
+struct GameStats
+{
+    uint32_t HandsPlayed = 0;
+    uint32_t HandsWon = 0;
+    uint32_t TotalCoinsBet = 0;
+    uint32_t TotalCoinsWon = 0;
+    uint32_t MostCoins = 0;
+    uint32_t CurrentWinningStreak = 0;
+    uint32_t LongestWinningStreak = 0;
+};
+
 struct MouseState
 {
     Point DownPos;
@@ -80,8 +91,10 @@ public:
     PokerHand PlayerHand;
     uint32_t PlayerCoins = 100;
     WinType Win;
+    uint32_t LastWinAmount;
     BetOptions PlayerBet;
     uint32_t ActualBet;
+    GameStats Stats;
 
     // TODO: find a better way to represent winning card selection
     std::set<int> WinningCards;

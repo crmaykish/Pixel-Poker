@@ -14,8 +14,6 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
  - Add a "repeat last bet" quick deal option to deal button on game over
  - Sound effects
  - Shuffle and dealing animations
- - Highlight win type and amount
- - Track some basic statistics (win rate, bet amounts, number of hands, etc)
  - Controller support
  - Final write-up on lessons learned, mistakes made, future ideas, etc
 
@@ -27,4 +25,3 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
 ## Todo List
 - add a default font and make the set method optional
 - add default textures too
-- max should set to all your money if you don't have at least 50
