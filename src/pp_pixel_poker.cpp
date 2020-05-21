@@ -8,6 +8,7 @@
 #include "commands/pp_command_update_bet_button.h"
 #include "commands/pp_command_update_deal_button.h"
 #include "commands/pp_command_update_card.h"
+#include "commands/pp_command_update_messages.h"
 
 void PixelPoker::Init()
 {
@@ -25,8 +26,6 @@ void PixelPoker::Init()
     // Set up the first scene
     scenes.push_back(Scene());
     Scene &s = scenes.at(0);
-
-    
 
     int e_gap = WINDOW_W_PIXELS / 120;
     int cardW = (WINDOW_W_PIXELS / 5) - e_gap - (e_gap / 5);
@@ -49,6 +48,13 @@ void PixelPoker::Init()
     coinsText->SetUpdateCommand(new UpdateCoinDisplayCommand(&game, coinsText));
     s.AddInterfaceElement(coinsText);
 
+    // Messages Display
+    InterfaceText *txtMessages = new InterfaceText(&assetManager);
+    txtMessages->SetRectangle(WINDOW_W_PIXELS - buttonW * 1.5 - buttonOffset, buttonOffset, buttonW * 1.5, buttonH);
+    txtMessages->SetFontKey(ASSET_FONT_MONO_0);
+    txtMessages->SetUpdateCommand(new UpdateMessagesCommand(&game, txtMessages));
+    s.AddInterfaceElement(txtMessages);
+
     // Bet MAX Button
     InterfaceButton *btnBetMax = new InterfaceButton(&assetManager);
     btnBetMax->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
@@ -56,19 +62,19 @@ void PixelPoker::Init()
     btnBetMax->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetMax->SetFontKey(ASSET_FONT_MONO_0);
     btnBetMax->SetText("BET MAX");
-    btnBetMax->Enable();    // TODO: this should be controlled by an update command
+    btnBetMax->Enable(); // TODO: this should be controlled by an update command
     btnBetMax->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetMax, BET_MAX));
     btnBetMax->SetClickedCommand(new BetCommand(&game, BET_MAX));
     s.AddInterfaceElement(btnBetMax);
 
     // Bet 10 Button
     InterfaceButton *btnBetTen = new InterfaceButton(&assetManager);
-    btnBetTen->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - 2*buttonH, buttonW, buttonH);
+    btnBetTen->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - 2 * buttonH, buttonW, buttonH);
     btnBetTen->SetDownTextureKey(ASSET_IMAGE_BG_0);
     btnBetTen->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetTen->SetFontKey(ASSET_FONT_MONO_0);
     btnBetTen->SetText("BET 10");
-    btnBetTen->Enable();    // TODO: this should be controlled by an update command
+    btnBetTen->Enable(); // TODO: this should be controlled by an update command
     btnBetTen->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetTen, BET_TEN));
     btnBetTen->SetClickedCommand(new BetCommand(&game, BET_TEN));
     s.AddInterfaceElement(btnBetTen);
@@ -80,19 +86,19 @@ void PixelPoker::Init()
     btnBetFive->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetFive->SetFontKey(ASSET_FONT_MONO_0);
     btnBetFive->SetText("BET 5");
-    btnBetFive->Enable();    // TODO: this should be controlled by an update command
+    btnBetFive->Enable(); // TODO: this should be controlled by an update command
     btnBetFive->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetFive, BET_FIVE));
     btnBetFive->SetClickedCommand(new BetCommand(&game, BET_FIVE));
     s.AddInterfaceElement(btnBetFive);
 
     // Bet 1 Button
     InterfaceButton *btnBetOne = new InterfaceButton(&assetManager);
-    btnBetOne->SetRectangle(buttonOffset + buttonW, WINDOW_H_PIXELS - buttonOffset - 2*buttonH, buttonW, buttonH);
+    btnBetOne->SetRectangle(buttonOffset + buttonW, WINDOW_H_PIXELS - buttonOffset - 2 * buttonH, buttonW, buttonH);
     btnBetOne->SetDownTextureKey(ASSET_IMAGE_BG_0);
     btnBetOne->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetOne->SetFontKey(ASSET_FONT_MONO_0);
     btnBetOne->SetText("BET 1");
-    btnBetOne->Enable();    // TODO: this should be controlled by an update command
+    btnBetOne->Enable(); // TODO: this should be controlled by an update command
     btnBetOne->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetOne, BET_ONE));
     btnBetOne->SetClickedCommand(new BetCommand(&game, BET_ONE));
     s.AddInterfaceElement(btnBetOne);

@@ -45,9 +45,11 @@ void GameState::StateHandlerInit()
     SourceDeck = Deck(true, true);
     PlayerHand.Clear();
     PlayerDiscard.Clear();
-
     ClearCardFlags();
 
+    // Reset bet and win flags
+    PlayerBet = BET_NONE;
+    Win = LOSE;
     PokerState = POKER_WAIT_FOR_BET;
 }
 
@@ -131,19 +133,6 @@ void GameState::StateHandlerGameOver()
 
 int GameState::CheckWinnings()
 {
-    // TODO: define these outside of this function and use them to represent a winning hand state along with
-    // the indexes of cards
-    const int LOSE = 0;
-    const int JACKS_OR_BETTER = 1;
-    const int TWO_PAIR = 2;
-    const int THREE_OF_A_KIND = 3;
-    const int STRAIGHT = 4;
-    const int FLUSH = 6;
-    const int FULL_HOUSE = 9;
-    const int FOUR_OF_A_KIND = 25;
-    const int STRAIGHT_FLUSH = 50;
-    const int ROYAL_FLUSH = 250;
-
     // Royal Flush
     WinningCards = PlayerHand.IsRoyalFlush();
 

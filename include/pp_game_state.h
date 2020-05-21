@@ -12,10 +12,25 @@ const int PLAYER_HAND_SIZE = 5;
 
 enum BetOptions
 {
+    BET_NONE = 0,
     BET_ONE = 1,
     BET_FIVE = 5,
     BET_TEN = 10,
     BET_MAX = 50
+};
+
+enum WinType
+{
+    LOSE = 0,
+    JACKS_OR_BETTER = 1,
+    TWO_PAIR = 2,
+    THREE_OF_A_KIND = 3,
+    STRAIGHT = 4,
+    FLUSH = 6,
+    FULL_HOUSE = 9,
+    FOUR_OF_A_KIND = 25,
+    STRAIGHT_FLUSH = 50,
+    ROYAL_FLUSH = 250
 };
 
 enum PokerGameState
@@ -55,6 +70,7 @@ private:
 
     int CheckWinnings();
     void ClearCardFlags();
+
 public:
     // Game State
     PokerGameState PokerState;
@@ -62,8 +78,8 @@ public:
     Deck SourceDeck;
     Deck PlayerDiscard;
     PokerHand PlayerHand;
-    int PlayerCoins = 100;
-    int WinAmount;  // TODO: make this an enum like the bet options, maybe combine it with the winning cards
+    uint32_t PlayerCoins = 100;
+    WinType Win;
     BetOptions PlayerBet;
 
     // TODO: find a better way to represent winning card selection
