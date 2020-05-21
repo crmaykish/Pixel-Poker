@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "pp_game_state.h"
 
@@ -66,6 +67,9 @@ public:
 
     SDL_Texture *LoadTexture(std::string fileName);
     TTF_Font *LoadFont(std::string fileName);
+    Mix_Chunk *LoadSound(std::string fileName);
+    Mix_Music *Mix_LoadMUS(std::string fileName);
+
 };
 
 #endif

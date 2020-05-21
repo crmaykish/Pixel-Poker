@@ -36,7 +36,7 @@ void Renderer::Init()
 {
     // TODO: error checking
 
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
     TTF_Init();
 
@@ -93,6 +93,16 @@ SDL_Texture *Renderer::LoadTexture(std::string fileName)
 TTF_Font *Renderer::LoadFont(std::string fileName)
 {
     return TTF_OpenFont(fileName.c_str(), DEFAULT_FONT_SIZE);
+}
+
+Mix_Chunk *Renderer::LoadSound(std::string fileName)
+{
+    return Mix_LoadWAV(fileName.c_str());
+}
+
+Mix_Music *Renderer::Mix_LoadMUS(std::string fileName)
+{
+    // TODO
 }
 
 void Renderer::Clear()

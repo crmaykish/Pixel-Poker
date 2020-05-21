@@ -168,6 +168,11 @@ void InterfaceButton::SetDownTextureKey(std::string downTextureKey)
     DownTextureKey = downTextureKey;
 }
 
+void InterfaceButton::SetDownSoundKey(std::string downSoundKey)
+{
+    DownSoundKey = downSoundKey;
+}
+
 // InterfacePlayingCard
 
 void InterfacePlayingCard::SetIndexInHand(int i)

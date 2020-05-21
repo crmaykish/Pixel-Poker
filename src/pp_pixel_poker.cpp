@@ -10,6 +10,8 @@
 #include "commands/pp_command_update_card.h"
 #include "commands/pp_command_update_messages.h"
 
+#include "SDL2/SDL_mixer.h"
+
 void PixelPoker::Init()
 {
     Log("Starting Pixel Poker...", LOG_INFO);
@@ -22,6 +24,9 @@ void PixelPoker::Init()
 
     // Set up asset manager
     assetManager.SetRenderer(&renderer);
+
+    sounds.Init();
+    sounds.SetAssetManager(&assetManager);
 
     // Set up the first scene
     scenes.push_back(Scene());
@@ -64,7 +69,11 @@ void PixelPoker::Init()
     btnBetMax->SetText("BET MAX");
     btnBetMax->Enable(); // TODO: this should be controlled by an update command
     btnBetMax->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetMax, BET_MAX));
-    btnBetMax->SetClickedCommand(new BetCommand(&game, BET_MAX));
+    btnBetMax->SetClickedCommand(new BetCommand(&game, &sounds, BET_MAX));
+
+    // TODO: convert clicked and update commands to a list so we can register multiple handlers to an event
+    // use that to take in sound player and a button element
+
     s.AddInterfaceElement(btnBetMax);
 
     // Bet 10 Button
@@ -76,7 +85,7 @@ void PixelPoker::Init()
     btnBetTen->SetText("BET 10");
     btnBetTen->Enable(); // TODO: this should be controlled by an update command
     btnBetTen->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetTen, BET_TEN));
-    btnBetTen->SetClickedCommand(new BetCommand(&game, BET_TEN));
+    btnBetTen->SetClickedCommand(new BetCommand(&game, &sounds, BET_TEN));
     s.AddInterfaceElement(btnBetTen);
 
     // Bet 5 Button
@@ -88,7 +97,7 @@ void PixelPoker::Init()
     btnBetFive->SetText("BET 5");
     btnBetFive->Enable(); // TODO: this should be controlled by an update command
     btnBetFive->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetFive, BET_FIVE));
-    btnBetFive->SetClickedCommand(new BetCommand(&game, BET_FIVE));
+    btnBetFive->SetClickedCommand(new BetCommand(&game, &sounds, BET_FIVE));
     s.AddInterfaceElement(btnBetFive);
 
     // Bet 1 Button
@@ -100,7 +109,7 @@ void PixelPoker::Init()
     btnBetOne->SetText("BET 1");
     btnBetOne->Enable(); // TODO: this should be controlled by an update command
     btnBetOne->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetOne, BET_ONE));
-    btnBetOne->SetClickedCommand(new BetCommand(&game, BET_ONE));
+    btnBetOne->SetClickedCommand(new BetCommand(&game, &sounds, BET_ONE));
     s.AddInterfaceElement(btnBetOne);
 
     // Deal Button

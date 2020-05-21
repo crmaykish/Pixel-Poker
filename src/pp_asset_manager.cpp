@@ -44,7 +44,6 @@ SDL_Texture *AssetManager::GetTexture(std::string key)
 
 TTF_Font *AssetManager::GetFont(std::string key)
 {
-    // TODO: does no caching, always loads from a file
     TTF_Font *f = NULL;
 
     try
@@ -69,4 +68,31 @@ TTF_Font *AssetManager::GetFont(std::string key)
     }
 
     return f;
+}
+
+Mix_Chunk *AssetManager::GetSound(std::string key)
+{
+    Mix_Chunk *c = NULL;
+
+    try
+    {
+        c = soundMap.at(key);
+    }
+    catch (...)
+    {
+    }
+
+    if (c == NULL)
+    {
+        Log("Loading sound: " + key, LOG_INFO);
+        c = renderer->LoadSound(SOUNDS_PATH + key);
+
+        if (c == NULL)
+        {
+            Log("Failed to load sound: " + key, LOG_ERROR);
+        }
+
+        soundMap.insert({key, c});
+    }
+
 }

@@ -3,14 +3,16 @@
 
 #include "pp_command.h"
 #include "pp_game_state.h"
+#include "pp_sound_player.h"
 
 class BetCommand : public GameCommand
 {
 private:
+    SoundPlayer *Sounds;
     BetOptions BetOption;
 
 public:
-    BetCommand(GameState *game, BetOptions betOption);
+    BetCommand(GameState *game, SoundPlayer *sounds, BetOptions betOption);
     void Execute();
 };
 

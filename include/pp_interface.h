@@ -90,6 +90,7 @@ protected:
 
     std::string UpTextureKey;
     std::string DownTextureKey;
+    std::string DownSoundKey;
 
     GameCommand *ClickedCommand;
 
@@ -102,6 +103,7 @@ public:
     void SetClickedCommand(GameCommand *clickedCommand);
     void SetUpTextureKey(std::string upTextureKey);
     void SetDownTextureKey(std::string downTextureKey);
+    void SetDownSoundKey(std::string downSoundKey);
 
     void Enable()
     {

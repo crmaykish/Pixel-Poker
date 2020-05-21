@@ -6,6 +6,7 @@
 #include "pp_game_state.h"
 #include "pp_renderer.h"
 #include "pp_asset_manager.h"
+#include "pp_sound_player.h"
 #include "pp_scene.h"
 
 /**
@@ -26,6 +27,7 @@ private:
     PixelPokerRunState RunState;
     GameState game;
     Renderer renderer;
+    SoundPlayer sounds;
     AssetManager assetManager;
     std::vector<Scene> scenes;
     int activeScene;
