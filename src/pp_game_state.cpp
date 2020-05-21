@@ -48,20 +48,21 @@ void GameState::StateHandlerInit()
     PlayerDiscard.Clear();
     ClearCardFlags();
 
-    // Reset bet and win flags
-    PlayerBet = BET_NONE;
-    ActualBet = 0;
     Win = LOSE;
     LastWinAmount = 0;
-
-    if (PlayerCoins == 0)
-    {
-        PlayerCoins = DEFAULT_PLAYER_COINS;
-    }
+    ResetFlag = false;
 
     Command::HandleCommandList(NewGameCommands);
 
-    PokerState = POKER_WAIT_FOR_BET;
+    // If the bet has already been selected, jump to placing the bet, else wait for a bet
+    if (ActualBet > 0)
+    {
+        PokerState = POKER_PLACE_BET;
+    }
+    else
+    {
+        PokerState = POKER_WAIT_FOR_BET;
+    }
 }
 
 void GameState::StateHandlerWaitForBet()
@@ -187,12 +188,25 @@ void GameState::StateHandlerDeal()
 
 void GameState::StateHandlerGameOver()
 {
-    // Wait for player to start another round
     if (DealButtonPressed)
     {
-        ClearCardFlags();
+        // rebuy
+        if (PlayerCoins == 0)
+        {
+            PlayerCoins = DEFAULT_PLAYER_COINS;
+            ResetFlag = true;
+        }
+        else {
+            PokerState = POKER_INIT;
+        }
 
         DealButtonPressed = false;
+    }
+
+    else if (BetButtonPressed)
+    {
+        BetButtonPressed = false;
+
         PokerState = POKER_INIT;
     }
 }

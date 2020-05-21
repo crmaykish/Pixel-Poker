@@ -10,7 +10,7 @@ void UpdateBetButtonCommand::Execute()
 {
     UpdateTarget->Disable();
 
-    if (Game->PokerState == POKER_WAIT_FOR_BET)
+    if (Game->PokerState == POKER_WAIT_FOR_BET || Game->PokerState == POKER_GAME_OVER)
     {
         if ((BetOption == BET_MAX && Game->PlayerCoins > 0) ||
             (Game->PlayerCoins >= BetOption))

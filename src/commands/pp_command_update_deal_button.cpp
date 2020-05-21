@@ -14,16 +14,23 @@ void UpdateDealButtonCommand::Execute()
         UpdateTarget->Enable();
         break;
     case POKER_GAME_OVER:
+
+        UpdateTarget->Enable();
+
         if (Game->PlayerCoins == 0)
         {
             UpdateTarget->SetText("REBUY");
         }
         else
         {
-            UpdateTarget->SetText("PLAY AGAIN");
-        }
+            UpdateTarget->SetText("REPEAT BET");
 
-        UpdateTarget->Enable();
+            if (Game->PlayerCoins < Game->ActualBet || Game->ResetFlag)
+            {
+                UpdateTarget->Disable();
+            }
+        }
+        
         break;
     default:
         UpdateTarget->SetText("DEAL");

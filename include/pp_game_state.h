@@ -106,6 +106,7 @@ public:
     BetOptions PlayerBet;
     uint32_t ActualBet;
     GameStats Stats;
+    bool ResetFlag = false;
 
     // TODO: find a better way to represent winning card selection
     std::set<int> WinningCards;
