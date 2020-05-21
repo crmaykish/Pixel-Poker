@@ -194,6 +194,8 @@ int InterfacePlayingCard::GetIndexInHand()
 
 void InterfacePlayingCard::Update(GameState &game)
 {
+    Enabled = !game.PlayerHand.IsEmpty();
+
     if (game.PokerState == POKER_SELECT_CARDS || game.PokerState == POKER_GAME_OVER)
     {
         Card = game.PlayerHand.CardAt(IndexInHand);

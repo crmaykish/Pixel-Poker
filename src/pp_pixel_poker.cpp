@@ -7,7 +7,6 @@
 #include "commands/pp_command_update_coin_display.h"
 #include "commands/pp_command_update_bet_button.h"
 #include "commands/pp_command_update_deal_button.h"
-#include "commands/pp_command_update_card.h"
 #include "commands/pp_command_update_messages.h"
 #include "commands/pp_command_play_sound.h"
 
@@ -147,7 +146,6 @@ void PixelPoker::Init()
         card->SetRectangle(e_gap + i * (e_gap + cardW), 200, cardW, cardH);
         card->SetIndexInHand(i);
         card->Enable();
-        card->SetUpdateCommand(new UpdatePlayingCardCommand(&game, card));
         card->RegisterClickedCommand(new CardClickedCommand(&game, card));
         card->RegisterClickedCommand(cardClickSoundCommand);
         s.AddInterfaceElement(card);
