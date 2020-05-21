@@ -106,25 +106,28 @@ std::string *InterfaceText::GetText()
 
 // InterfaceButton
 
+void InterfaceButton::ClickHandler(GameState &game)
+{
+    ClickedPreviously = ClickedCurrently;
+    ClickedCurrently = game.Mouse.Clicked && PointInRect(&game.Mouse.DownPos, &Rectangle);
+
+    if (ClickedPreviously && !ClickedCurrently && PointInRect(&game.Mouse.UpPos, &Rectangle))
+    {
+        for (auto c : ClickedCommands)
+        {
+            if (c != NULL)
+            {
+                c->Execute();
+            }
+        }
+    }
+}
+
 void InterfaceButton::Update(GameState &game)
 {
     if (Enabled)
     {
-        bool mouseClicked = game.Mouse.Clicked;
-
-        ClickedPreviously = ClickedCurrently;
-        ClickedCurrently = mouseClicked && PointInRect(&game.Mouse.DownPos, &Rectangle);
-
-        if (ClickedPreviously && !ClickedCurrently && PointInRect(&game.Mouse.UpPos, &Rectangle))
-        {
-            for (auto c : ClickedCommands)
-            {
-                if (c != NULL)
-                {
-                    c->Execute();
-                }
-            }
-        }
+        ClickHandler(game);
     }
 
     if (UpdateCommand != NULL)
@@ -191,27 +194,21 @@ int InterfacePlayingCard::GetIndexInHand()
 
 void InterfacePlayingCard::Update(GameState &game)
 {
-    InterfaceButton::Update(game);
-
-    // Check for visbility / highlighted / etc
-    // Need to store rendering flags in the class
-
-    // what kind of card is this?
-    if (!game.PlayerHand.IsEmpty())
+    if (game.PokerState == POKER_SELECT_CARDS || game.PokerState == POKER_GAME_OVER)
     {
-        Enable();
-
         Card = game.PlayerHand.CardAt(IndexInHand);
-
         Highlighted = game.CardFlags[IndexInHand].Selected;
-
         Winning = game.CardFlags[IndexInHand].Winning;
     }
     else
     {
         Highlighted = false;
         Winning = false;
-        Disable();
+    }
+
+    if (game.PokerState == POKER_SELECT_CARDS)
+    {
+        ClickHandler(game);
     }
 }
 

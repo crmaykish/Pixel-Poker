@@ -94,6 +94,8 @@ protected:
 
     std::vector<Command*> ClickedCommands;
 
+    void ClickHandler(GameState &game);
+
 public:
     InterfaceButton(AssetManager *assetManager) : InterfaceText(assetManager) {}
     void Update(GameState &game);
