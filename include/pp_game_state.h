@@ -81,6 +81,7 @@ public:
     uint32_t PlayerCoins = 100;
     WinType Win;
     BetOptions PlayerBet;
+    uint32_t ActualBet;
 
     // TODO: find a better way to represent winning card selection
     std::set<int> WinningCards;

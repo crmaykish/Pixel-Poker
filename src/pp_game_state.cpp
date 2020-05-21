@@ -49,6 +49,7 @@ void GameState::StateHandlerInit()
 
     // Reset bet and win flags
     PlayerBet = BET_NONE;
+    ActualBet = 0;
     Win = LOSE;
     PokerState = POKER_WAIT_FOR_BET;
 }
@@ -64,7 +65,14 @@ void GameState::StateHandlerWaitForBet()
 
 void GameState::StateHandlerPlaceBet()
 {
-    PlayerCoins -= PlayerBet;
+    if (PlayerCoins >= PlayerBet)
+    {
+        ActualBet = PlayerBet;
+    } else {
+        ActualBet = PlayerCoins;
+    }
+
+    PlayerCoins -= ActualBet;
 
     // Deal cards to the player
     SourceDeck.MoveTopCards(PlayerHand, PLAYER_HAND_SIZE);
@@ -110,7 +118,7 @@ void GameState::StateHandlerDeal()
 
     // Check the final hand and award winnings
     Win = CheckWinnings();
-    PlayerCoins += (PlayerBet * Win);
+    PlayerCoins += (ActualBet * Win);
 
     for (auto w : WinningCards)
     {

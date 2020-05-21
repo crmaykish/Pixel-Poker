@@ -8,12 +8,15 @@ UpdateBetButtonCommand::UpdateBetButtonCommand(GameState *game, InterfaceButton 
 
 void UpdateBetButtonCommand::Execute()
 {
-    if (Game->PokerState == POKER_WAIT_FOR_BET && Game->PlayerCoins >= BetOption)
+    UpdateTarget->Disable();
+
+    if (Game->PokerState == POKER_WAIT_FOR_BET)
     {
-        UpdateTarget->Enable();
+        if ((BetOption == BET_MAX && Game->PlayerCoins > 0) ||
+            (Game->PlayerCoins >= BetOption))
+        {
+            UpdateTarget->Enable();
+        }
     }
-    else
-    {
-        UpdateTarget->Disable();
-    }
+    
 }
