@@ -62,9 +62,7 @@ void GameState::StateHandlerWaitForBet()
 
 void GameState::StateHandlerPlaceBet()
 {
-    LastBet = 10;
-
-    PlayerCoins -= LastBet;
+    PlayerCoins -= PlayerBet;
 
     // Deal cards to the player
     SourceDeck.MoveTopCards(PlayerHand, PLAYER_HAND_SIZE);
@@ -109,7 +107,7 @@ void GameState::StateHandlerDeal()
     ClearCardFlags();
 
     // Check the final hand and award winnings
-    PlayerCoins += (LastBet * CheckWinnings());
+    PlayerCoins += (PlayerBet * CheckWinnings());
 
     for (auto w : WinningCards)
     {

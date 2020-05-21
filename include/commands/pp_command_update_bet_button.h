@@ -8,9 +8,10 @@ class UpdateBetButtonCommand : public GameCommand
 {
 protected:
     InterfaceButton *UpdateTarget;
+    BetOptions BetOption;
 
 public:
-    UpdateBetButtonCommand(GameState *game, InterfaceButton *updateTarget);
+    UpdateBetButtonCommand(GameState *game, InterfaceButton *updateTarget, BetOptions betOption);
     void Execute();
 };
 

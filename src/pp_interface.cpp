@@ -77,6 +77,9 @@ void InterfaceText::Render(Renderer &renderer)
         PreRenderCommand->Execute();
     }
 
+    // TODO: hack for text visibility
+    renderer.RenderRectangle({0x00, 0x00, 0x00, 0xA0}, &Rectangle);
+
     renderer.RenderText(Text,
                         Assets->GetFont(FontKey),
                         {0xFF, 0xFF, 0xFF, 0xFF},

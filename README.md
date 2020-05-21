@@ -10,8 +10,7 @@
 On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-ttf-dev`
 
 ## Missing Features
- - Variable betting amounts
- - Reset on running out of money
+  - Reset on running out of money
  - Sound effects
  - Shuffle and dealing animations
  - Highlight win type and amount
@@ -24,3 +23,5 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl-tt
 ## Bugs
 
 ## Todo List
+- add a default font and make the set method optional
+- add default textures too

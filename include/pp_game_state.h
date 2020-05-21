@@ -10,6 +10,14 @@
  */
 const int PLAYER_HAND_SIZE = 5;
 
+enum BetOptions
+{
+    BET_ONE = 1,
+    BET_FIVE = 5,
+    BET_TEN = 10,
+    BET_MAX = 50
+};
+
 enum PokerGameState
 {
     POKER_INIT,
@@ -55,8 +63,8 @@ public:
     Deck PlayerDiscard;
     PokerHand PlayerHand;
     int PlayerCoins = 100;
-    int LastBet;
-    int LastWinnings;
+    int WinAmount;  // TODO: make this an enum like the bet options, maybe combine it with the winning cards
+    BetOptions PlayerBet;
 
     // TODO: find a better way to represent winning card selection
     std::set<int> WinningCards;

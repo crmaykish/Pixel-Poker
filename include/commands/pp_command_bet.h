@@ -6,8 +6,11 @@
 
 class BetCommand : public GameCommand
 {
+private:
+    BetOptions BetOption;
+
 public:
-    BetCommand(GameState *game);
+    BetCommand(GameState *game, BetOptions betOption);
     void Execute();
 };
 
