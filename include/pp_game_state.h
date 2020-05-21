@@ -12,6 +12,11 @@
  */
 const int PLAYER_HAND_SIZE = 5;
 
+/**
+ * @brief Starting coins amount for a new game or rebuy
+ */
+const int DEFAULT_PLAYER_COINS = 100;
+
 enum BetOptions
 {
     BET_NONE = 0,

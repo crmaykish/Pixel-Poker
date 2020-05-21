@@ -54,6 +54,11 @@ void GameState::StateHandlerInit()
     Win = LOSE;
     LastWinAmount = 0;
 
+    if (PlayerCoins == 0)
+    {
+        PlayerCoins = DEFAULT_PLAYER_COINS;
+    }
+
     Command::HandleCommandList(NewGameCommands);
 
     PokerState = POKER_WAIT_FOR_BET;
