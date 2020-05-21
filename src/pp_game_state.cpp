@@ -109,7 +109,8 @@ void GameState::StateHandlerDeal()
     ClearCardFlags();
 
     // Check the final hand and award winnings
-    PlayerCoins += (PlayerBet * CheckWinnings());
+    Win = CheckWinnings();
+    PlayerCoins += (PlayerBet * Win);
 
     for (auto w : WinningCards)
     {
@@ -131,7 +132,7 @@ void GameState::StateHandlerGameOver()
     }
 }
 
-int GameState::CheckWinnings()
+WinType GameState::CheckWinnings()
 {
     // Royal Flush
     WinningCards = PlayerHand.IsRoyalFlush();

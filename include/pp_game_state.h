@@ -68,7 +68,7 @@ private:
     void StateHandlerDeal();
     void StateHandlerGameOver();
 
-    int CheckWinnings();
+    WinType CheckWinnings();
     void ClearCardFlags();
 
 public:
