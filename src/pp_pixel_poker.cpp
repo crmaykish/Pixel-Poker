@@ -9,6 +9,7 @@
 #include "commands/pp_command_update_deal_button.h"
 #include "commands/pp_command_update_card.h"
 #include "commands/pp_command_update_messages.h"
+#include "commands/pp_command_play_sound.h"
 
 #include "SDL2/SDL_mixer.h"
 
@@ -60,6 +61,8 @@ void PixelPoker::Init()
     txtMessages->SetUpdateCommand(new UpdateMessagesCommand(&game, txtMessages));
     s.AddInterfaceElement(txtMessages);
 
+    PlaySoundCommand *btnClickSoundCommand = new PlaySoundCommand(&sounds, ASSET_SOUND_BUTTON_0);
+
     // Bet MAX Button
     InterfaceButton *btnBetMax = new InterfaceButton(&assetManager);
     btnBetMax->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
@@ -69,10 +72,8 @@ void PixelPoker::Init()
     btnBetMax->SetText("BET MAX");
     btnBetMax->Enable(); // TODO: this should be controlled by an update command
     btnBetMax->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetMax, BET_MAX));
-    btnBetMax->SetClickedCommand(new BetCommand(&game, &sounds, BET_MAX));
-
-    // TODO: convert clicked and update commands to a list so we can register multiple handlers to an event
-    // use that to take in sound player and a button element
+    btnBetMax->RegisterClickedCommand(new BetCommand(&game, &sounds, BET_MAX));
+    btnBetMax->RegisterClickedCommand(btnClickSoundCommand);
 
     s.AddInterfaceElement(btnBetMax);
 
@@ -85,7 +86,8 @@ void PixelPoker::Init()
     btnBetTen->SetText("BET 10");
     btnBetTen->Enable(); // TODO: this should be controlled by an update command
     btnBetTen->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetTen, BET_TEN));
-    btnBetTen->SetClickedCommand(new BetCommand(&game, &sounds, BET_TEN));
+    btnBetTen->RegisterClickedCommand(new BetCommand(&game, &sounds, BET_TEN));
+    btnBetTen->RegisterClickedCommand(btnClickSoundCommand);
     s.AddInterfaceElement(btnBetTen);
 
     // Bet 5 Button
@@ -97,7 +99,8 @@ void PixelPoker::Init()
     btnBetFive->SetText("BET 5");
     btnBetFive->Enable(); // TODO: this should be controlled by an update command
     btnBetFive->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetFive, BET_FIVE));
-    btnBetFive->SetClickedCommand(new BetCommand(&game, &sounds, BET_FIVE));
+    btnBetFive->RegisterClickedCommand(new BetCommand(&game, &sounds, BET_FIVE));
+    btnBetFive->RegisterClickedCommand(btnClickSoundCommand);
     s.AddInterfaceElement(btnBetFive);
 
     // Bet 1 Button
@@ -109,7 +112,8 @@ void PixelPoker::Init()
     btnBetOne->SetText("BET 1");
     btnBetOne->Enable(); // TODO: this should be controlled by an update command
     btnBetOne->SetUpdateCommand(new UpdateBetButtonCommand(&game, btnBetOne, BET_ONE));
-    btnBetOne->SetClickedCommand(new BetCommand(&game, &sounds, BET_ONE));
+    btnBetOne->RegisterClickedCommand(new BetCommand(&game, &sounds, BET_ONE));
+    btnBetOne->RegisterClickedCommand(btnClickSoundCommand);
     s.AddInterfaceElement(btnBetOne);
 
     // Deal Button
@@ -118,9 +122,12 @@ void PixelPoker::Init()
     buttonDeal->SetDownTextureKey(ASSET_IMAGE_BG_0);
     buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
-    buttonDeal->SetClickedCommand(new DealCommand(&game));
+    buttonDeal->RegisterClickedCommand(new DealCommand(&game));
     buttonDeal->SetUpdateCommand(new UpdateDealButtonCommand(&game, buttonDeal));
+    buttonDeal->RegisterClickedCommand(btnClickSoundCommand);
     s.AddInterfaceElement(buttonDeal);
+
+    PlaySoundCommand *cardClickSoundCommand = new PlaySoundCommand(&sounds, ASSET_SOUND_CARD_CLICK_0);
 
     // Poker Hand
     for (int i = 0; i < 5; i++)
@@ -129,8 +136,9 @@ void PixelPoker::Init()
         card->SetRectangle(e_gap + i * (e_gap + cardW), 200, cardW, cardH);
         card->SetIndexInHand(i);
         card->Enable();
-        card->SetClickedCommand(new CardClickedCommand(&game, card));
         card->SetUpdateCommand(new UpdatePlayingCardCommand(&game, card));
+        card->RegisterClickedCommand(new CardClickedCommand(&game, card));
+        card->RegisterClickedCommand(cardClickSoundCommand);
         s.AddInterfaceElement(card);
     }
 }

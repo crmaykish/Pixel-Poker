@@ -20,6 +20,7 @@ const std::string ASSET_FONT_MONO_0 = "FreeMono.ttf";
 const std::string ASSET_SOUND_WIN_0 = "winning_hand.wav";
 const std::string ASSET_SOUND_LOSE_0 = "losing_hand.wav";
 const std::string ASSET_SOUND_BUTTON_0 = "button_press.wav";
+const std::string ASSET_SOUND_CARD_CLICK_0 = "card_click.wav";
 
 class AssetManager
 {

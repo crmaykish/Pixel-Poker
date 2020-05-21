@@ -32,10 +32,10 @@ public:
 class SoundCommand : public Command
 {
 protected:
-    SoundPlayer Sounds;
+    SoundPlayer *Sounds;
 
 public:
     SoundCommand(SoundPlayer *sounds);
-}
+};
 
 #endif // PP_COMMAND_H

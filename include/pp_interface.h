@@ -92,7 +92,7 @@ protected:
     std::string DownTextureKey;
     std::string DownSoundKey;
 
-    GameCommand *ClickedCommand;
+    std::vector<Command*> ClickedCommands;
 
 public:
     InterfaceButton(AssetManager *assetManager) : InterfaceText(assetManager) {}
@@ -100,7 +100,7 @@ public:
     void Render(Renderer &renderer);
     void Destroy();
 
-    void SetClickedCommand(GameCommand *clickedCommand);
+    void RegisterClickedCommand(Command *clickedCommand);
     void SetUpTextureKey(std::string upTextureKey);
     void SetDownTextureKey(std::string downTextureKey);
     void SetDownSoundKey(std::string downSoundKey);

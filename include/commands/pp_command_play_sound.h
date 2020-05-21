@@ -10,7 +10,8 @@ protected:
     std::string SoundKey;
 
 public:
-    PlaySoundCommand(std::string soundKey);
-}
+    PlaySoundCommand(SoundPlayer *sounds, std::string soundKey);
+    void Execute();
+};
 
 #endif // PP_COMMAND_PLAY_SOUND_H

@@ -116,9 +116,12 @@ void InterfaceButton::Update(GameState &game)
 
         if (ClickedPreviously && !ClickedCurrently && PointInRect(&game.Mouse.UpPos, &Rectangle))
         {
-            if (ClickedCommand != NULL)
+            for (auto command : ClickedCommands)
             {
-                ClickedCommand->Execute();
+                if (command != NULL)
+                {
+                    command->Execute();
+                }
             }
         }
     }
@@ -153,9 +156,9 @@ void InterfaceButton::Render(Renderer &renderer)
 
 void InterfaceButton::Destroy() {}
 
-void InterfaceButton::SetClickedCommand(GameCommand *clickedCommand)
+void InterfaceButton::RegisterClickedCommand(Command *clickedCommand)
 {
-    ClickedCommand = clickedCommand;
+    ClickedCommands.push_back(clickedCommand);
 }
 
 void InterfaceButton::SetUpTextureKey(std::string upTextureKey)
