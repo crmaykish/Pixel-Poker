@@ -47,8 +47,8 @@ void PixelPoker::Init()
     int cardW = (WINDOW_W_PIXELS / 5) - e_gap - (e_gap / 5);
     int cardH = cardW * 1.42;
 
-    int buttonW = 400;
-    int buttonH = 120;
+    int buttonW = (WINDOW_W_PIXELS - 2 * e_gap) / 3;
+    int buttonH = (WINDOW_H_PIXELS - 2 * e_gap) / 6;
     int buttonOffset = e_gap;
 
     // Background Image
@@ -128,7 +128,7 @@ void PixelPoker::Init()
 
     // Deal Button
     InterfaceButton *buttonDeal = new InterfaceButton(&assetManager);
-    buttonDeal->SetRectangle(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
+    buttonDeal->SetRectangle(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - 2 * buttonH, buttonW, 2 * buttonH);
     buttonDeal->SetDownTextureKey(ASSET_IMAGE_BG_0);
     buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
