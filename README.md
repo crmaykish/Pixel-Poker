@@ -12,7 +12,6 @@ On Debian/Ubuntu: `apt-get install cmake libsdl2-dev libsdl2-image-dev libsdl2-t
 
 ## Missing Features
  - Shuffle and dealing animations
- - Variable resolution and full screen support
  - Build an Android version
  - Controller support
  - Visual design overhaul / coherent graphical and audio theme
