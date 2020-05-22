@@ -8,5 +8,5 @@ UpdateCoinDisplayCommand::UpdateCoinDisplayCommand(GameState *game, InterfaceTex
 
 void UpdateCoinDisplayCommand::Execute()
 {
-    UpdateTarget->SetText("COINS: " + std::to_string(Game->PlayerCoins));
+    UpdateTarget->SetText(std::to_string(Game->PlayerCoins));
 }

@@ -16,11 +16,14 @@ const std::string SOUNDS_PATH = ASSETS_PATH + "sounds/";
 
 //TODO: find a better way to key assets instead of file names
 const std::string ASSET_IMAGE_BG_0 = "background/background.png";
+const std::string ASSET_IMAGE_CHIP_0 = "ui/chip.png";
 const std::string ASSET_IMAGE_BTN_UP_0 = "ui/button_blue_unpressed.png";
 const std::string ASSET_IMAGE_BTN_DOWN_0 = "ui/button_blue_pressed.png";
 const std::string ASSET_IMAGE_BTN_UP_1 = "ui/button_big_blue_unpressed.png";
 const std::string ASSET_IMAGE_BTN_DOWN_1 = "ui/button_big_blue_pressed.png";
-const std::string ASSET_FONT_MONO_0 = "FreeMono.ttf";
+const std::string ASSET_IMAGE_BTN_UP_2 = "ui/button_red_unpressed.png";
+const std::string ASSET_IMAGE_BTN_DOWN_2 = "ui/button_red_pressed.png";
+const std::string ASSET_FONT_MONO_0 = "expressway rg.ttf";
 const std::string ASSET_SOUND_WIN_0 = "winning_hand.wav";
 const std::string ASSET_SOUND_LOSE_0 = "losing_hand.wav";
 const std::string ASSET_SOUND_BUTTON_0 = "button_press.wav";

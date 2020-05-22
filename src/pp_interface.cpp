@@ -79,7 +79,7 @@ void InterfaceText::Render(Renderer &renderer)
     }
 
     // TODO: hack for text visibility
-    renderer.RenderRectangle({0x00, 0x00, 0x00, 0xA0}, &Rectangle);
+    // renderer.RenderRectangle({0x00, 0x00, 0x00, 0xA0}, &Rectangle);
 
     renderer.RenderText(Text,
                         Assets->GetFont(FontKey),
@@ -149,7 +149,16 @@ void InterfaceButton::Render(Renderer &renderer)
 
     if (!Text.empty())
     {
-        renderer.RenderText(Text, Assets->GetFont(FontKey), {0xFF, 0xFF, 0xFF, 0xFF}, &Rectangle);
+        int padding = 12;
+
+        // add some padding to the text
+        SDL_Rect textRect = Rectangle;
+        textRect.w = textRect.w - 2 * padding;
+        // textRect.h = textRect.h;// - 2 * padding;
+        textRect.x += padding;
+        textRect.y -= padding/4;
+
+        renderer.RenderText(Text, Assets->GetFont(FontKey), {0xFF, 0xFF, 0xFF, 0xFF}, &textRect);
     }
 
     if (!Enabled)

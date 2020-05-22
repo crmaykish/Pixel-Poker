@@ -10,6 +10,7 @@
 #include "commands/pp_command_update_deal_button.h"
 #include "commands/pp_command_update_messages.h"
 #include "commands/pp_command_play_sound.h"
+#include "commands/pp_command_quit.h"
 
 #include "SDL2/SDL_mixer.h"
 
@@ -64,21 +65,39 @@ void PixelPoker::Init()
     background->SetTextureKey(ASSET_IMAGE_BG_0);
     s.AddInterfaceElement(background);
 
-    // Coins Display
+    // Coin Icon
+    InterfaceStaticImage *coin = new InterfaceStaticImage(&assetManager);
+    coin->SetRectangle(e_gap, e_gap, buttonH - 2 * e_gap, buttonH - 2 * e_gap);
+    coin->SetTextureKey(ASSET_IMAGE_CHIP_0);
+    s.AddInterfaceElement(coin);
+
+    // Coin Text
     InterfaceText *coinsText = new InterfaceText(&assetManager);
-    coinsText->SetRectangle(e_gap, e_gap, buttonW - e_gap, buttonH);
+    coinsText->SetRectangle(buttonH, e_gap, buttonH * 1.5 - 2 * e_gap, buttonH - 2 * e_gap);
     coinsText->SetFontKey(ASSET_FONT_MONO_0);
     coinsText->SetUpdateCommand(new UpdateCoinDisplayCommand(&game, coinsText));
     s.AddInterfaceElement(coinsText);
 
     // Messages Display
     InterfaceText *txtMessages = new InterfaceText(&assetManager);
-    txtMessages->SetRectangle(settings.Resolution.w - buttonW * 2 - e_gap, e_gap, buttonW * 2, buttonH);
+    txtMessages->SetRectangle(buttonW + e_gap, e_gap, buttonW * 2 - buttonH / 2 - e_gap - buttonH / 2, buttonH - 2 * e_gap);
     txtMessages->SetFontKey(ASSET_FONT_MONO_0);
     txtMessages->SetUpdateCommand(new UpdateMessagesCommand(&game, txtMessages));
     s.AddInterfaceElement(txtMessages);
 
     PlaySoundCommand *btnClickSoundCommand = new PlaySoundCommand(&sounds, ASSET_SOUND_BUTTON_0);
+
+    // Quit button
+    InterfaceButton *btnQuit = new InterfaceButton(&assetManager);
+    btnQuit->SetRectangle(settings.Resolution.w - buttonH + e_gap, e_gap, buttonH - 2 * e_gap, buttonH - 2 * e_gap);
+    btnQuit->SetDownTextureKey(ASSET_IMAGE_BTN_DOWN_2);
+    btnQuit->SetUpTextureKey(ASSET_IMAGE_BTN_UP_2);
+    btnQuit->SetFontKey(ASSET_FONT_MONO_0);
+    btnQuit->SetText("X");
+    btnQuit->Enable(); // TODO: this should be controlled by an update command
+    btnQuit->RegisterClickedCommand(btnClickSoundCommand);
+    btnQuit->RegisterClickedCommand(new QuitCommand());
+    s.AddInterfaceElement(btnQuit);
 
     // Bet MAX Button
     InterfaceButton *btnBetMax = new InterfaceButton(&assetManager);
@@ -150,7 +169,7 @@ void PixelPoker::Init()
     for (int i = 0; i < 5; i++)
     {
         InterfacePlayingCard *card = new InterfacePlayingCard(&assetManager);
-        card->SetRectangle(e_gap + i * (e_gap + cardW), (settings.Resolution.h / 6) + 2 * e_gap, cardW, cardH);
+        card->SetRectangle(e_gap + i * (e_gap + cardW), (settings.Resolution.h / 6) + e_gap, cardW, cardH);
         card->SetIndexInHand(i);
         card->Enable();
         card->RegisterClickedCommand(new CardClickedCommand(&game, card));

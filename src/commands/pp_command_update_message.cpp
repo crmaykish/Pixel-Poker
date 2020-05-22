@@ -56,7 +56,7 @@ void UpdateMessagesCommand::Execute()
 
         if (Game->Win != LOSE)
         {
-            txt += " WIN " + std::to_string(Game->LastWinAmount);
+            txt += " | WIN " + std::to_string(Game->LastWinAmount);
         }
     }
 

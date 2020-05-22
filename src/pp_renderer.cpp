@@ -39,7 +39,7 @@ void Renderer::RenderTexture(SDL_Texture *tex, SDL_Rect *rect)
 
 void Renderer::RenderText(std::string text, TTF_Font *font, SDL_Color color, SDL_Rect *rect)
 {
-    SDL_Surface *s = TTF_RenderText_Solid(font, text.c_str(), color);
+    SDL_Surface *s = TTF_RenderText_Blended(font, text.c_str(), color);
     SDL_Texture *t = SDL_CreateTextureFromSurface(SDLRenderer, s);
 
     SDL_RenderCopy(SDLRenderer, t, NULL, rect);
@@ -61,7 +61,9 @@ SDL_Texture *Renderer::LoadTexture(std::string fileName)
 
 TTF_Font *Renderer::LoadFont(std::string fileName)
 {
-    return TTF_OpenFont(fileName.c_str(), DEFAULT_FONT_SIZE);
+    TTF_Font *f = TTF_OpenFont(fileName.c_str(), 256);
+
+    return f;
 }
 
 Mix_Chunk *Renderer::LoadSound(std::string fileName)

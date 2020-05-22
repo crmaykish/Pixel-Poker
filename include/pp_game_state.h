@@ -100,7 +100,7 @@ public:
     Deck SourceDeck;
     Deck PlayerDiscard;
     PokerHand PlayerHand;
-    uint32_t PlayerCoins = 100;
+    uint32_t PlayerCoins = DEFAULT_PLAYER_COINS;
     WinType Win;
     uint32_t LastWinAmount;
     BetOptions PlayerBet;
