@@ -46,7 +46,7 @@ void PixelPoker::Init()
     scenes.push_back(Scene());
     Scene &s = scenes.at(0);
 
-    int e_gap = settings.Resolution.w / 100;
+    int e_gap = settings.Resolution.w / 60;
 
     int cardW = (settings.Resolution.w / 5) - e_gap - (e_gap / 5);
     // int cardH = cardW * 1.42;
@@ -55,6 +55,8 @@ void PixelPoker::Init()
 
     int buttonW = (settings.Resolution.w - 2 * e_gap) / 3;
     int buttonH = (settings.Resolution.h - 2 * e_gap) / 6;
+
+    Log(std::to_string(buttonW) + " by" + std::to_string(buttonH));
 
     // Background Image
     InterfaceStaticImage *background = new InterfaceStaticImage(&assetManager);
@@ -81,7 +83,7 @@ void PixelPoker::Init()
     // Bet MAX Button
     InterfaceButton *btnBetMax = new InterfaceButton(&assetManager);
     btnBetMax->SetRectangle(e_gap, settings.Resolution.h - e_gap - buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
-    btnBetMax->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    btnBetMax->SetDownTextureKey(ASSET_IMAGE_BTN_DOWN_0);
     btnBetMax->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetMax->SetFontKey(ASSET_FONT_MONO_0);
     btnBetMax->SetText("BET MAX");
@@ -95,7 +97,7 @@ void PixelPoker::Init()
     // Bet 10 Button
     InterfaceButton *btnBetTen = new InterfaceButton(&assetManager);
     btnBetTen->SetRectangle(e_gap, settings.Resolution.h - e_gap - 2 * buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
-    btnBetTen->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    btnBetTen->SetDownTextureKey(ASSET_IMAGE_BTN_DOWN_0);
     btnBetTen->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetTen->SetFontKey(ASSET_FONT_MONO_0);
     btnBetTen->SetText("BET 10");
@@ -108,7 +110,7 @@ void PixelPoker::Init()
     // Bet 5 Button
     InterfaceButton *btnBetFive = new InterfaceButton(&assetManager);
     btnBetFive->SetRectangle(e_gap + buttonW, settings.Resolution.h - e_gap - buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
-    btnBetFive->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    btnBetFive->SetDownTextureKey(ASSET_IMAGE_BTN_DOWN_0);
     btnBetFive->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetFive->SetFontKey(ASSET_FONT_MONO_0);
     btnBetFive->SetText("BET 5");
@@ -121,7 +123,7 @@ void PixelPoker::Init()
     // Bet 1 Button
     InterfaceButton *btnBetOne = new InterfaceButton(&assetManager);
     btnBetOne->SetRectangle(e_gap + buttonW, settings.Resolution.h - e_gap - 2 * buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
-    btnBetOne->SetDownTextureKey(ASSET_IMAGE_BG_0);
+    btnBetOne->SetDownTextureKey(ASSET_IMAGE_BTN_DOWN_0);
     btnBetOne->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetOne->SetFontKey(ASSET_FONT_MONO_0);
     btnBetOne->SetText("BET 1");
@@ -134,8 +136,8 @@ void PixelPoker::Init()
     // Deal Button
     InterfaceButton *buttonDeal = new InterfaceButton(&assetManager);
     buttonDeal->SetRectangle(settings.Resolution.w - e_gap - buttonW, settings.Resolution.h - e_gap - 2 * buttonH + e_gap, buttonW, 2 * buttonH - e_gap);
-    buttonDeal->SetDownTextureKey(ASSET_IMAGE_BG_0);
-    buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
+    buttonDeal->SetDownTextureKey(ASSET_IMAGE_BTN_DOWN_1);
+    buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_1);
     buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
     buttonDeal->RegisterClickedCommand(new DealCommand(&game));
     buttonDeal->SetUpdateCommand(new UpdateDealButtonCommand(&game, buttonDeal));
