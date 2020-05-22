@@ -43,13 +43,15 @@ void PixelPoker::Init()
     scenes.push_back(Scene());
     Scene &s = scenes.at(0);
 
-    int e_gap = WINDOW_W_PIXELS / 120;
+    int e_gap = WINDOW_W_PIXELS / 100;
+
     int cardW = (WINDOW_W_PIXELS / 5) - e_gap - (e_gap / 5);
-    int cardH = cardW * 1.42;
+    // int cardH = cardW * 1.42;
+    // TODO: set a max ratio on card w/h
+    int cardH = (WINDOW_H_PIXELS - 5 * e_gap) / 2;
 
     int buttonW = (WINDOW_W_PIXELS - 2 * e_gap) / 3;
     int buttonH = (WINDOW_H_PIXELS - 2 * e_gap) / 6;
-    int buttonOffset = e_gap;
 
     // Background Image
     InterfaceStaticImage *background = new InterfaceStaticImage(&assetManager);
@@ -59,14 +61,14 @@ void PixelPoker::Init()
 
     // Coins Display
     InterfaceText *coinsText = new InterfaceText(&assetManager);
-    coinsText->SetRectangle(buttonOffset, buttonOffset, buttonW, buttonH);
+    coinsText->SetRectangle(e_gap, e_gap, buttonW - e_gap, buttonH);
     coinsText->SetFontKey(ASSET_FONT_MONO_0);
     coinsText->SetUpdateCommand(new UpdateCoinDisplayCommand(&game, coinsText));
     s.AddInterfaceElement(coinsText);
 
     // Messages Display
     InterfaceText *txtMessages = new InterfaceText(&assetManager);
-    txtMessages->SetRectangle(WINDOW_W_PIXELS - buttonW * 1.5 - buttonOffset, buttonOffset, buttonW * 1.5, buttonH);
+    txtMessages->SetRectangle(WINDOW_W_PIXELS - buttonW * 2 - e_gap, e_gap, buttonW * 2, buttonH);
     txtMessages->SetFontKey(ASSET_FONT_MONO_0);
     txtMessages->SetUpdateCommand(new UpdateMessagesCommand(&game, txtMessages));
     s.AddInterfaceElement(txtMessages);
@@ -75,7 +77,7 @@ void PixelPoker::Init()
 
     // Bet MAX Button
     InterfaceButton *btnBetMax = new InterfaceButton(&assetManager);
-    btnBetMax->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
+    btnBetMax->SetRectangle(e_gap, WINDOW_H_PIXELS - e_gap - buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
     btnBetMax->SetDownTextureKey(ASSET_IMAGE_BG_0);
     btnBetMax->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetMax->SetFontKey(ASSET_FONT_MONO_0);
@@ -89,7 +91,7 @@ void PixelPoker::Init()
 
     // Bet 10 Button
     InterfaceButton *btnBetTen = new InterfaceButton(&assetManager);
-    btnBetTen->SetRectangle(buttonOffset, WINDOW_H_PIXELS - buttonOffset - 2 * buttonH, buttonW, buttonH);
+    btnBetTen->SetRectangle(e_gap, WINDOW_H_PIXELS - e_gap - 2 * buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
     btnBetTen->SetDownTextureKey(ASSET_IMAGE_BG_0);
     btnBetTen->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetTen->SetFontKey(ASSET_FONT_MONO_0);
@@ -102,7 +104,7 @@ void PixelPoker::Init()
 
     // Bet 5 Button
     InterfaceButton *btnBetFive = new InterfaceButton(&assetManager);
-    btnBetFive->SetRectangle(buttonOffset + buttonW, WINDOW_H_PIXELS - buttonOffset - buttonH, buttonW, buttonH);
+    btnBetFive->SetRectangle(e_gap + buttonW, WINDOW_H_PIXELS - e_gap - buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
     btnBetFive->SetDownTextureKey(ASSET_IMAGE_BG_0);
     btnBetFive->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetFive->SetFontKey(ASSET_FONT_MONO_0);
@@ -115,7 +117,7 @@ void PixelPoker::Init()
 
     // Bet 1 Button
     InterfaceButton *btnBetOne = new InterfaceButton(&assetManager);
-    btnBetOne->SetRectangle(buttonOffset + buttonW, WINDOW_H_PIXELS - buttonOffset - 2 * buttonH, buttonW, buttonH);
+    btnBetOne->SetRectangle(e_gap + buttonW, WINDOW_H_PIXELS - e_gap - 2 * buttonH + e_gap, buttonW - e_gap, buttonH - e_gap);
     btnBetOne->SetDownTextureKey(ASSET_IMAGE_BG_0);
     btnBetOne->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     btnBetOne->SetFontKey(ASSET_FONT_MONO_0);
@@ -128,7 +130,7 @@ void PixelPoker::Init()
 
     // Deal Button
     InterfaceButton *buttonDeal = new InterfaceButton(&assetManager);
-    buttonDeal->SetRectangle(WINDOW_W_PIXELS - buttonOffset - buttonW, WINDOW_H_PIXELS - buttonOffset - 2 * buttonH, buttonW, 2 * buttonH);
+    buttonDeal->SetRectangle(WINDOW_W_PIXELS - e_gap - buttonW, WINDOW_H_PIXELS - e_gap - 2 * buttonH + e_gap, buttonW, 2 * buttonH - e_gap);
     buttonDeal->SetDownTextureKey(ASSET_IMAGE_BG_0);
     buttonDeal->SetUpTextureKey(ASSET_IMAGE_BTN_UP_0);
     buttonDeal->SetFontKey(ASSET_FONT_MONO_0);
@@ -143,7 +145,7 @@ void PixelPoker::Init()
     for (int i = 0; i < 5; i++)
     {
         InterfacePlayingCard *card = new InterfacePlayingCard(&assetManager);
-        card->SetRectangle(e_gap + i * (e_gap + cardW), 200, cardW, cardH);
+        card->SetRectangle(e_gap + i * (e_gap + cardW), (WINDOW_H_PIXELS / 6) + 2 * e_gap, cardW, cardH);
         card->SetIndexInHand(i);
         card->Enable();
         card->RegisterClickedCommand(new CardClickedCommand(&game, card));
