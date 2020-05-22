@@ -6,6 +6,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+#include "pp_settings.h"
+
 
 const std::string WINDOW_TITLE = "PIXEL POKER";
 
@@ -48,7 +50,7 @@ private:
     SDL_Renderer *SDLRenderer;
 
 public:
-    void Init();
+    void Init(Settings settings);
     void Destroy();
 
     void Sleep();

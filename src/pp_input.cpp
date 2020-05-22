@@ -13,6 +13,14 @@ void Input::HandleInput(GameState &gameState)
             // TODO: Clean up properly before killing the application
             exit(0);
         }
+        else if (event.type == SDL_KEYDOWN)
+        {
+            if (event.key.keysym.sym == SDLK_ESCAPE)
+            {
+                // TODO: another exit hack
+                exit(0);
+            }
+        }
         else if (event.type == SDL_MOUSEBUTTONDOWN)
         {
             // Set mouse clicked flag

@@ -1,7 +1,7 @@
 #include "pp_renderer.h"
 #include "pp_game_state.h"
 
-void Renderer::Init()
+void Renderer::Init(Settings settings)
 {
     // TODO: error checking
 
@@ -12,8 +12,8 @@ void Renderer::Init()
     // Create an SDL Window
     SDLWindow = SDL_CreateWindow(WINDOW_TITLE.c_str(),
                                  0, 0,
-                                 WINDOW_W_PIXELS, WINDOW_H_PIXELS,
-                                 SDL_WINDOW_SHOWN);
+                                 settings.Resolution.w, settings.Resolution.h,
+                                 settings.Resolution.fullscreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_SHOWN);
 
     // Create an SDL renderer and attach it to the window
     SDLRenderer = SDL_CreateRenderer(SDLWindow,

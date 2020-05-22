@@ -26,6 +26,7 @@ class PixelPoker
 {
 private:
     PixelPokerRunState RunState;
+    Settings settings;
     GameState game;
     Renderer renderer;
     Input input;
